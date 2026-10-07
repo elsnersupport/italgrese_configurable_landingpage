@@ -6,11 +6,18 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column"
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
-        <css src="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&amp;family=Jost:wght@300;400;500;600&amp;display=swap" src_type="url"/>
+        <!-- Self-hosted fonts (@font-face in configurator.css), preloaded: all three are used above the fold. -->
+        <font src="Italgres_Configurator::fonts/jost.woff2"/>
+        <font src="Italgres_Configurator::fonts/cormorant-garamond.woff2"/>
+        <font src="Italgres_Configurator::fonts/cormorant-garamond-italic.woff2"/>
         <css src="Italgres_Configurator::css/configurator.css"/>
     </head>
     <body>
         <attribute name="class" value="ig-configurator-page"/>
+        <!-- The configurator template prints its own JSON-LD Product; an empty value removes the
+             schema.org/Product microdata Hyvä/Magento put on <body>, which has no properties here. -->
+        <attribute name="itemtype" value=""/>
+        <attribute name="itemscope" value=""/>
         <referenceContainer name="product.info.main" remove="true"/>
         <referenceBlock name="product.detail.page" remove="true"/>
         <referenceBlock name="page.main.title" remove="true"/>

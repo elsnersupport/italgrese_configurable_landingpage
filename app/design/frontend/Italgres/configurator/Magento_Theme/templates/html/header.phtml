@@ -47,13 +47,15 @@ $logoHeight = $logo ? ((int)$logo->getLogoHeight() ?: 46) : 46;
     <?php endif; ?>
 
     <?php if ($nav && $nav->isCartEnabled()): ?>
-    <button type="button" class="ig-header__bag" @click="$dispatch('ig-open-drawer')">
+    <button type="button" class="ig-header__bag" @click="$dispatch('ig-open-drawer')"
+            aria-label="<?= $escaper->escapeHtmlAttr(__('Selection')) ?>">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
         <span class="ig-header__bag-label"><?= $escaper->escapeHtml(__('Selection')) ?></span>
         <span class="ig-header__count" x-text="count" x-show="count > 0" x-cloak></span>
     </button>
     <?php else: ?>
-    <button type="button" class="ig-header__bag" @click="$dispatch('ig-open-quote')">
+    <button type="button" class="ig-header__bag" @click="$dispatch('ig-open-quote')"
+            aria-label="<?= $escaper->escapeHtmlAttr(__('Request a quote')) ?>">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg>
         <span class="ig-header__bag-label"><?= $escaper->escapeHtml(__('Request a quote')) ?></span>
     </button>

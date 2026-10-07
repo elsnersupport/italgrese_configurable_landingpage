@@ -203,6 +203,49 @@ class Configurator implements ArgumentInterface
     }
 
     /**
+     * schema.org Product (JSON-LD) for search engines. The offer is the base price the page shows.
+     *
+     * @return array<string, mixed>
+     */
+    public function getStructuredData(): array
+    {
+        $product = $this->getProduct();
+        if (!$product) {
+            return [];
+        }
+        $config = $this->getConfig();
+        $url = $product->getProductUrl();
+        $description = (string)($product->getData('meta_description') ?: $product->getData('short_description'));
+        $data = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Product',
+            'name' => (string)$product->getName(),
+            'sku' => (string)$product->getSku(),
+            'description' => trim(strip_tags($description)),
+            'url' => $url,
+            'offers' => [
+                '@type' => 'Offer',
+                'url' => $url,
+                'price' => number_format((float)$config['price']['base'], 2, '.', ''),
+                'priceCurrency' => $config['price']['currency'],
+                'availability' => 'https://schema.org/' . ($product->isSaleable() ? 'InStock' : 'OutOfStock'),
+                'itemCondition' => 'https://schema.org/NewCondition',
+            ],
+        ];
+        $brand = $this->settings->getBrandName();
+        if ($brand !== '') {
+            $data['brand'] = ['@type' => 'Brand', 'name' => $brand];
+        }
+        $image = (string)$product->getImage();
+        if ($image !== '' && $image !== 'no_selection') {
+            $data['image'] = $this->storeManager->getStore()->getBaseUrl(UrlInterface::URL_TYPE_MEDIA)
+                . 'catalog/product' . $image;
+        }
+
+        return $data;
+    }
+
+    /**
      * @return Option[]
      */
     private function getSelectOptions(Product $product): array

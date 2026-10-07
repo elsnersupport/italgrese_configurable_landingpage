@@ -33,6 +33,10 @@ $cartEnabled = $vm->isCartEnabled();
     $config,
     JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES
 ) ?></script>
+<script type="application/ld+json"><?= /* @noEscape */ json_encode(
+    $vm->getStructuredData(),
+    JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES
+) ?></script>
 
 <div class="ig-cfg"
      x-data="igConfigurator()"
@@ -54,8 +58,7 @@ $cartEnabled = $vm->isCartEnabled();
 
             <div class="ig-hotspots" x-ref="hotspots" style="display:none">
                 <template x-for="side in ['left', 'right']" :key="side">
-                    <button type="button" class="ig-hotspot" :data-hotspot="side" x-show="canAddModule()" @click="addModule()"
-                            :aria-label="'<?= $escaper->escapeJs(__('Add a seat')) ?>'">
+                    <button type="button" class="ig-hotspot" :data-hotspot="side" x-show="canAddModule()" @click="addModule()">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
                         <span><?= $escaper->escapeHtml(__('Add seat')) ?></span>
                     </button>
@@ -145,7 +148,7 @@ $cartEnabled = $vm->isCartEnabled();
                             </span>
                             <svg class="ig-step__chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
                         </button>
-                        <div class="ig-step__body" :aria-hidden="openStep !== option.id">
+                        <div class="ig-step__body" :inert="openStep !== option.id">
                           <div class="ig-step__inner">
                             <p class="ig-step__note" x-show="option.note" x-text="option.note"></p>
 
@@ -254,7 +257,8 @@ $cartEnabled = $vm->isCartEnabled();
                 </template>
             </ol>
 
-            <div class="ig-summary" x-ref="summary">
+            <?php /* x-cloak below the steps: shown once Alpine has rendered the steps, so nothing jumps down (CLS) */ ?>
+            <div class="ig-summary" x-ref="summary" x-cloak>
                 <h2 class="ig-summary__title"><?= $escaper->escapeHtml(__('Your configuration')) ?></h2>
                 <dl class="ig-summary__list">
                     <div class="ig-summary__row">
@@ -281,7 +285,7 @@ $cartEnabled = $vm->isCartEnabled();
                 </div>
             </div>
 
-            <div class="ig-buy">
+            <div class="ig-buy" x-cloak>
                 <div class="ig-qty" role="group" aria-label="<?= $escaper->escapeHtmlAttr(__('Quantity')) ?>">
                     <button type="button" @click="qty = Math.max(1, qty - 1)" aria-label="<?= $escaper->escapeHtmlAttr(__('Decrease quantity')) ?>">−</button>
                     <span x-text="qty"></span>
@@ -300,9 +304,9 @@ $cartEnabled = $vm->isCartEnabled();
                 <?php endif; ?>
             </div>
             <?php if ($quoteEnabled): ?>
-                <p class="ig-buy__note"><?= $escaper->escapeHtml(__('No commitment. Our design team replies within one working day with a personalised quote, lead time and delivery options.')) ?></p>
+                <p class="ig-buy__note" x-cloak><?= $escaper->escapeHtml(__('No commitment. Our design team replies within one working day with a personalised quote, lead time and delivery options.')) ?></p>
             <?php endif; ?>
-            <ul class="ig-assurance">
+            <ul class="ig-assurance" x-cloak>
                 <li><?= $escaper->escapeHtml(__('Handcrafted in Italy to your specification')) ?></li>
                 <li><?= $escaper->escapeHtml(__('Free white-glove delivery & installation')) ?></li>
                 <li><?= $escaper->escapeHtml(__('10-year structural warranty')) ?></li>

@@ -178,7 +178,11 @@ class DemoInstaller
             ->setData('ig_cfg_tagline', $row['tagline'])
             ->setData('ig_cfg_lead_time', $row['lead_time'])
             ->setData('ig_cfg_features', implode("\n", $row['features']))
-            ->setData('meta_title', $row['name'] . ' · Configure in 3D');
+            ->setData('meta_title', $row['name'] . ' · Configure in 3D')
+            ->setData(
+                'meta_description',
+                $row['meta_description'] ?? $row['tagline'] . ' Configure it in real-time 3D and request a quote.'
+            );
 
         $options = [];
         foreach ($row['options'] as $sort => $optionRow) {
@@ -233,8 +237,12 @@ class DemoInstaller
         $this->configWriter->save('italgres_demo/general/lock_enabled', 1);
         $this->configWriter->save('general/store_information/name', 'Italgres');
         $this->configWriter->save('design/head/default_title', 'Italgres');
-        $this->configWriter->save('design/head/title_suffix', ' · Italgres');
+        // Magento adds the space between title and suffix itself
+        $this->configWriter->save('design/head/title_suffix', '· Italgres');
         $this->configWriter->save('design/search_engine_robots/default_robots', 'NOINDEX,NOFOLLOW');
+        // Share links (?cfg=…) and /catalog/product/view/id/… show the same page: point search engines at one URL
+        $this->configWriter->save('catalog/seo/product_canonical_tag', 1);
+        $this->configWriter->save('catalog/seo/category_canonical_tag', 1);
         $this->configWriter->save('catalog/recently_products/recently_viewed_enabled', 0);
         $this->configWriter->save('checkout/sidebar/display', 0);
         $this->configWriter->save('web/cookie/cookie_restriction', 0);

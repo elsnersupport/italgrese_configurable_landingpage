@@ -22,7 +22,7 @@
 .ig-header__bag { position: relative; display: flex; align-items: center; gap: 8px; margin-left: auto; padding: 8px 4px; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; background: none; border: 0; cursor: pointer; color: inherit; }
 .ig-header__bag svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.4; }
 .ig-header__count { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: #1f1c19; color: #fbf8f3; font-size: 11px; letter-spacing: 0; display: inline-flex; align-items: center; justify-content: center; }
-.ig-footer { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; padding: 26px 32px; border-top: 1px solid #e4dcd1; background: #fbf9f6; font-family: "Jost", Arial, sans-serif; font-size: 12px; letter-spacing: .08em; color: #7d7469; }
+.ig-footer { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; padding: 26px 32px; border-top: 1px solid #e4dcd1; background: #fbf9f6; font-family: "Jost", Arial, sans-serif; font-size: 12px; letter-spacing: .08em; color: #6b635a; }
 .page-footer { margin-top: 0 !important; }
 @media (max-width: 1440px) {
     .ig-header { gap: 20px; }

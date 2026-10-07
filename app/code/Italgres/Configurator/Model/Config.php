@@ -59,4 +59,12 @@ class Config
     {
         return $this->scopeConfig->isSetFlag(self::PATH . 'quote_customer_copy', ScopeInterface::SCOPE_STORE);
     }
+
+    /**
+     * Brand for structured data: Stores > Configuration > General > Store Information > Store Name.
+     */
+    public function getBrandName(): string
+    {
+        return (string)$this->scopeConfig->getValue('general/store_information/name', ScopeInterface::SCOPE_STORE);
+    }
 }
