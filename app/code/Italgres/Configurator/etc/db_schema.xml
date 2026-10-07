@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <!-- Material library: fabrics, leathers, woods, metals, porcelain slabs shared by every configurable product -->
+    <table name="italgres_cfg_material" resource="default" engine="innodb" comment="Italgres Configurator Material Library">
+        <column xsi:type="int" name="material_id" unsigned="true" nullable="false" identity="true" comment="Material ID"/>
+        <column xsi:type="varchar" name="code" length="64" nullable="false" comment="Code"/>
+        <column xsi:type="varchar" name="name" length="128" nullable="false" comment="Name"/>
+        <column xsi:type="varchar" name="family" length="32" nullable="false" default="fabric" comment="Family"/>
+        <column xsi:type="varchar" name="color" length="9" nullable="true" comment="Base colour (hex)"/>
+        <column xsi:type="varchar" name="map" length="255" nullable="true" comment="Albedo texture"/>
+        <column xsi:type="varchar" name="normal_map" length="255" nullable="true" comment="Normal map"/>
+        <column xsi:type="varchar" name="roughness_map" length="255" nullable="true" comment="Roughness map"/>
+        <column xsi:type="varchar" name="swatch" length="255" nullable="true" comment="Swatch image"/>
+        <column xsi:type="decimal" name="repeat_scale" scale="3" precision="8" unsigned="false" nullable="false" default="1" comment="Texture repeats per UV unit"/>
+        <column xsi:type="decimal" name="roughness" scale="3" precision="5" unsigned="false" nullable="false" default="0.8" comment="Roughness 0-1"/>
+        <column xsi:type="decimal" name="metalness" scale="3" precision="5" unsigned="false" nullable="false" default="0" comment="Metalness 0-1"/>
+        <column xsi:type="decimal" name="sheen" scale="3" precision="5" unsigned="false" nullable="false" default="0" comment="Fabric sheen 0-1"/>
+        <column xsi:type="varchar" name="sheen_color" length="9" nullable="true" comment="Sheen colour (hex)"/>
+        <column xsi:type="decimal" name="clearcoat" scale="3" precision="5" unsigned="false" nullable="false" default="0" comment="Clearcoat 0-1"/>
+        <column xsi:type="decimal" name="normal_scale" scale="3" precision="5" unsigned="false" nullable="false" default="1" comment="Normal map strength"/>
+        <column xsi:type="text" name="description" nullable="true" comment="Description"/>
+        <column xsi:type="smallint" name="is_active" unsigned="true" nullable="false" default="1" comment="Is Active"/>
+        <column xsi:type="int" name="sort_order" unsigned="false" nullable="false" default="0" comment="Sort Order"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated At"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="material_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="ITALGRES_CFG_MATERIAL_CODE">
+            <column name="code"/>
+        </constraint>
+    </table>
+
+    <!-- 3D model library: GLB files plus the metadata the viewer needs to stretch and annotate them -->
+    <table name="italgres_cfg_model" resource="default" engine="innodb" comment="Italgres Configurator 3D Models">
+        <column xsi:type="int" name="model_id" unsigned="true" nullable="false" identity="true" comment="Model ID"/>
+        <column xsi:type="varchar" name="code" length="64" nullable="false" comment="Code"/>
+        <column xsi:type="varchar" name="name" length="128" nullable="false" comment="Name"/>
+        <column xsi:type="varchar" name="file" length="255" nullable="true" comment="GLB file"/>
+        <column xsi:type="decimal" name="base_width_cm" scale="1" precision="7" unsigned="false" nullable="false" default="100" comment="Real width of the model as shipped (cm)"/>
+        <column xsi:type="decimal" name="stretch_zone" scale="3" precision="5" unsigned="false" nullable="false" default="0.7" comment="Share of the width that stretches (0-1)"/>
+        <column xsi:type="varchar" name="rigid_parts" length="255" nullable="true" comment="Parts that move instead of stretching"/>
+        <column xsi:type="decimal" name="uv_scale" scale="3" precision="7" unsigned="false" nullable="false" default="1" comment="Texture scale multiplier"/>
+        <column xsi:type="decimal" name="rotation_y" scale="2" precision="6" unsigned="false" nullable="false" default="0" comment="Rotation around Y (deg)"/>
+        <column xsi:type="text" name="slots" nullable="true" comment="Detected materials and nodes (JSON)"/>
+        <column xsi:type="varchar" name="credits" length="512" nullable="true" comment="Attribution"/>
+        <column xsi:type="smallint" name="is_active" unsigned="true" nullable="false" default="1" comment="Is Active"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated At"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="model_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="ITALGRES_CFG_MODEL_CODE">
+            <column name="code"/>
+        </constraint>
+    </table>
+
+    <!-- Configurator settings per custom option (step) -->
+    <table name="catalog_product_option">
+        <column xsi:type="varchar" name="ig_display" length="16" nullable="true" comment="Configurator display style"/>
+        <column xsi:type="varchar" name="ig_note" length="255" nullable="true" comment="Configurator step help text"/>
+    </table>
+
+    <!-- Configurator settings per custom option value: what the value does to the 3D model -->
+    <table name="catalog_product_option_type_value">
+        <column xsi:type="varchar" name="ig_action" length="16" nullable="true" comment="3D action"/>
+        <column xsi:type="varchar" name="ig_target" length="255" nullable="true" comment="3D target parts"/>
+        <column xsi:type="int" name="ig_material_id" unsigned="true" nullable="true" comment="Library material"/>
+        <column xsi:type="varchar" name="ig_color" length="9" nullable="true" comment="Colour (hex)"/>
+        <column xsi:type="varchar" name="ig_param" length="255" nullable="true" comment="Action parameter"/>
+        <column xsi:type="varchar" name="ig_requires" length="255" nullable="true" comment="Only available with these value SKUs"/>
+        <constraint xsi:type="foreign" referenceId="CAT_PRD_OPT_TYPE_VAL_IG_MATERIAL_ID_ITALGRES_CFG_MATERIAL_ID"
+                    table="catalog_product_option_type_value" column="ig_material_id"
+                    referenceTable="italgres_cfg_material" referenceColumn="material_id" onDelete="SET NULL"/>
+    </table>
+
+    <!-- Quote requests sent from the configurator page -->
+    <table name="italgres_cfg_quote_request" resource="default" engine="innodb" comment="Italgres Configurator Quote Requests">
+        <column xsi:type="int" name="request_id" unsigned="true" nullable="false" identity="true" comment="Request ID"/>
+        <column xsi:type="varchar" name="reference" length="32" nullable="true" comment="Public reference"/>
+        <column xsi:type="varchar" name="status" length="20" nullable="false" default="new" comment="Status"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" default="0" comment="Store ID"/>
+        <column xsi:type="int" name="product_id" unsigned="true" nullable="true" comment="Product ID"/>
+        <column xsi:type="varchar" name="product_sku" length="64" nullable="true" comment="Product SKU"/>
+        <column xsi:type="varchar" name="product_name" length="255" nullable="true" comment="Product name"/>
+        <column xsi:type="varchar" name="config_code" length="255" nullable="true" comment="Configuration code"/>
+        <column xsi:type="text" name="configuration" nullable="true" comment="Selected options (JSON)"/>
+        <column xsi:type="text" name="selected_options" nullable="true" comment="option_id => value_id (JSON)"/>
+        <column xsi:type="varchar" name="dimensions" length="64" nullable="true" comment="Dimensions"/>
+        <column xsi:type="int" name="qty" unsigned="true" nullable="false" default="1" comment="Quantity"/>
+        <column xsi:type="decimal" name="unit_price" scale="2" precision="12" unsigned="false" nullable="false" default="0" comment="Unit price"/>
+        <column xsi:type="decimal" name="total_price" scale="2" precision="12" unsigned="false" nullable="false" default="0" comment="Total price"/>
+        <column xsi:type="varchar" name="currency" length="3" nullable="true" comment="Currency"/>
+        <column xsi:type="text" name="share_url" nullable="true" comment="Link that reopens the configuration"/>
+        <column xsi:type="varchar" name="snapshot" length="255" nullable="true" comment="Rendered image"/>
+        <column xsi:type="varchar" name="customer_name" length="255" nullable="false" comment="Name"/>
+        <column xsi:type="varchar" name="email" length="255" nullable="false" comment="Email"/>
+        <column xsi:type="varchar" name="phone" length="64" nullable="true" comment="Phone"/>
+        <column xsi:type="varchar" name="customer_type" length="32" nullable="true" comment="Homeowner / designer / trade"/>
+        <column xsi:type="varchar" name="company" length="255" nullable="true" comment="Company or studio"/>
+        <column xsi:type="varchar" name="city" length="128" nullable="true" comment="City"/>
+        <column xsi:type="varchar" name="country" length="64" nullable="true" comment="Country"/>
+        <column xsi:type="varchar" name="contact_preference" length="32" nullable="true" comment="Preferred contact"/>
+        <column xsi:type="text" name="message" nullable="true" comment="Customer message"/>
+        <column xsi:type="text" name="admin_note" nullable="true" comment="Internal note"/>
+        <column xsi:type="smallint" name="email_sent" unsigned="true" nullable="false" default="0" comment="Notification sent"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated At"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="request_id"/>
+        </constraint>
+        <index referenceId="ITALGRES_CFG_QUOTE_REQUEST_STATUS" indexType="btree">
+            <column name="status"/>
+        </index>
+        <index referenceId="ITALGRES_CFG_QUOTE_REQUEST_FULLTEXT" indexType="fulltext">
+            <column name="reference"/>
+            <column name="customer_name"/>
+            <column name="email"/>
+            <column name="phone"/>
+            <column name="company"/>
+            <column name="product_name"/>
+            <column name="config_code"/>
+        </index>
+    </table>
+</schema>

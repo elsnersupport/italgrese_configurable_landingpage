@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- Products with the configurator switched on get the italgres_configurator_product layout handle -->
+    <type name="Magento\Catalog\Helper\Product\View">
+        <plugin name="italgres_configurator_layout" type="Italgres\Configurator\Plugin\AddConfiguratorHandle"/>
+    </type>
+</config>

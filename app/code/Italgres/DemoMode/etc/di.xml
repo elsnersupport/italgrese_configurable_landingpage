@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="italgres_demo_install" xsi:type="object">Italgres\DemoMode\Console\Command\InstallDemo</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Italgres\DemoMode\Console\Command\InstallDemo">
+        <arguments>
+            <argument name="installer" xsi:type="object">Italgres\DemoMode\Model\DemoInstaller\Proxy</argument>
+        </arguments>
+    </type>
+</config>

@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- Server-side guard: configurator dependency rules are enforced on every full add-to-cart -->
+    <type name="Magento\Catalog\Model\Product\Type\AbstractType">
+        <plugin name="italgres_configurator_validate" type="Italgres\Configurator\Plugin\ValidateConfiguration"/>
+    </type>
+
+    <type name="Magento\Catalog\Model\Product\Option\Value">
+        <plugin name="italgres_configurator_normalize" type="Italgres\Configurator\Plugin\NormalizeOptionValue"/>
+    </type>
+
+    <!-- Admin listings -->
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="italgres_cfg_material_listing_data_source" xsi:type="string">Italgres\Configurator\Model\ResourceModel\Material\Grid\Collection</item>
+                <item name="italgres_cfg_model_listing_data_source" xsi:type="string">Italgres\Configurator\Model\ResourceModel\Model3d\Grid\Collection</item>
+                <item name="italgres_cfg_quote_listing_data_source" xsi:type="string">Italgres\Configurator\Model\ResourceModel\QuoteRequest\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="Italgres\Configurator\Model\ResourceModel\Material\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">italgres_cfg_material</argument>
+            <argument name="resourceModel" xsi:type="string">Italgres\Configurator\Model\ResourceModel\Material</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Italgres\Configurator\Model\ResourceModel\Model3d\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">italgres_cfg_model</argument>
+            <argument name="resourceModel" xsi:type="string">Italgres\Configurator\Model\ResourceModel\Model3d</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Italgres\Configurator\Model\ResourceModel\QuoteRequest\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">italgres_cfg_quote_request</argument>
+            <argument name="resourceModel" xsi:type="string">Italgres\Configurator\Model\ResourceModel\QuoteRequest</argument>
+        </arguments>
+    </virtualType>
+</config>

@@ -1,0 +1,129 @@
+<?php
+/**
+ * Quote request detail page (Sales > Quote Requests > View).
+ */
+declare(strict_types=1);
+
+/** @var \Italgres\Configurator\Block\Adminhtml\Quote\View $block */
+/** @var \Magento\Framework\Escaper $escaper */
+$request = $block->getRequestModel();
+if (!$request) {
+    return;
+}
+$rows = $request->getConfigurationRows();
+$snapshot = $block->getSnapshotUrl();
+$value = static fn($v) => ($v === null || $v === '') ? '—' : $v;
+?>
+<style>
+    .igq { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 30px; margin-top: 10px; }
+    .igq-card { background: #fff; border: 1px solid #e3e3e3; padding: 22px 26px; margin-bottom: 24px; }
+    .igq-card h2 { font-size: 1.7rem; margin: 0 0 14px; font-weight: 600; }
+    .igq-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+    .igq-ref { font-size: 2.4rem; font-weight: 300; }
+    .igq-status { display: inline-block; padding: 3px 10px; border-radius: 12px; background: #eef4ff; color: #1a4a8a; font-size: 1.2rem; text-transform: uppercase; letter-spacing: .06em; }
+    .igq-status--new { background: #fff4e0; color: #8a5a00; }
+    .igq-status--won { background: #e6f5ea; color: #1d6b37; }
+    .igq-status--lost { background: #f6e8e8; color: #8a2a2a; }
+    .igq-img { display: block; width: 100%; max-height: 460px; object-fit: contain; background: #f4efe8; }
+    .igq table { width: 100%; border-collapse: collapse; }
+    .igq td, .igq th { padding: 8px 0; border-bottom: 1px solid #eee; text-align: left; vertical-align: top; }
+    .igq td:last-child, .igq th:last-child { text-align: right; }
+    .igq .igq-muted { color: #777; }
+    .igq-total td { font-size: 1.6rem; font-weight: 600; border-bottom: 0; }
+    .igq dl { display: grid; grid-template-columns: 40% 60%; margin: 0; }
+    .igq dt { color: #777; padding: 6px 0; }
+    .igq dd { margin: 0; padding: 6px 0; word-break: break-word; }
+    .igq-message { white-space: pre-wrap; background: #f8f8f8; padding: 14px; margin-top: 10px; }
+    .igq-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    @media (max-width: 1100px) { .igq { grid-template-columns: 1fr; } }
+</style>
+
+<div class="igq-head">
+    <span class="igq-ref"><?= $escaper->escapeHtml($request->getData('reference')) ?></span>
+    <span class="igq-status igq-status--<?= $escaper->escapeHtmlAttr($request->getData('status')) ?>"><?= $escaper->escapeHtml($block->getStatusLabel()) ?></span>
+    <span class="igq-muted"><?= $escaper->escapeHtml(__('Received %1', $block->formatDate($request->getData('created_at'), \IntlDateFormatter::MEDIUM, true))) ?></span>
+    <span class="igq-muted"><?= $escaper->escapeHtml($request->getData('email_sent') ? __('Notification email sent') : __('Notification email not sent (check mail settings)')) ?></span>
+</div>
+<div class="igq-actions">
+    <a class="action-default" href="<?= $escaper->escapeUrl($block->getBackUrl()) ?>"><?= $escaper->escapeHtml(__('Back to list')) ?></a>
+    <a class="action-default" href="mailto:<?= $escaper->escapeHtmlAttr($request->getData('email')) ?>?subject=<?= $escaper->escapeHtmlAttr(rawurlencode((string)__('Your %1 quote (%2)', $request->getData('product_name'), $request->getData('reference')))) ?>"><?= $escaper->escapeHtml(__('Email customer')) ?></a>
+    <?php if ($request->getData('share_url')): ?>
+        <a class="action-default" target="_blank" rel="noopener" href="<?= $escaper->escapeUrl($request->getData('share_url')) ?>"><?= $escaper->escapeHtml(__('Open configuration in 3D')) ?></a>
+    <?php endif; ?>
+</div>
+
+<div class="igq">
+    <div>
+        <div class="igq-card">
+            <h2><?= $escaper->escapeHtml($request->getData('product_name')) ?></h2>
+            <?php if ($snapshot): ?>
+                <img class="igq-img" src="<?= $escaper->escapeUrl($snapshot) ?>" alt="">
+            <?php endif; ?>
+            <table>
+                <tbody>
+                <?php foreach ($rows as $row): ?>
+                    <tr>
+                        <td class="igq-muted"><?= $escaper->escapeHtml($row['step']) ?></td>
+                        <td><?= $escaper->escapeHtml($row['value']) ?>
+                            <?php if (!empty($row['price'])): ?>
+                                <span class="igq-muted">(<?= $row['price'] > 0 ? '+' : '−' ?><?= $escaper->escapeHtml($block->formatMoney(abs((float)$row['price']))) ?>)</span>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+                <tr><td class="igq-muted"><?= $escaper->escapeHtml(__('Dimensions')) ?></td><td><?= $escaper->escapeHtml($value($request->getData('dimensions'))) ?></td></tr>
+                <tr><td class="igq-muted"><?= $escaper->escapeHtml(__('Configuration code')) ?></td><td><?= $escaper->escapeHtml($request->getData('config_code')) ?></td></tr>
+                <tr><td class="igq-muted"><?= $escaper->escapeHtml(__('Quantity × unit price')) ?></td><td><?= (int)$request->getData('qty') ?> × <?= $escaper->escapeHtml($block->formatMoney((float)$request->getData('unit_price'))) ?></td></tr>
+                <tr class="igq-total"><td><?= $escaper->escapeHtml(__('Indicative total')) ?></td><td><?= $escaper->escapeHtml($block->formatMoney((float)$request->getData('total_price'))) ?></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div>
+        <div class="igq-card">
+            <h2><?= $escaper->escapeHtml(__('Customer')) ?></h2>
+            <dl>
+                <dt><?= $escaper->escapeHtml(__('Name')) ?></dt><dd><?= $escaper->escapeHtml($request->getData('customer_name')) ?></dd>
+                <dt><?= $escaper->escapeHtml(__('Email')) ?></dt><dd><a href="mailto:<?= $escaper->escapeHtmlAttr($request->getData('email')) ?>"><?= $escaper->escapeHtml($request->getData('email')) ?></a></dd>
+                <dt><?= $escaper->escapeHtml(__('Phone')) ?></dt><dd><?= $escaper->escapeHtml($value($request->getData('phone'))) ?></dd>
+                <dt><?= $escaper->escapeHtml(__('Preferred contact')) ?></dt><dd><?= $escaper->escapeHtml(ucfirst((string)$value($request->getData('contact_preference')))) ?></dd>
+                <dt><?= $escaper->escapeHtml(__('Customer type')) ?></dt><dd><?= $escaper->escapeHtml($value($block->getCustomerTypeLabel())) ?></dd>
+                <dt><?= $escaper->escapeHtml(__('Company / studio')) ?></dt><dd><?= $escaper->escapeHtml($value($request->getData('company'))) ?></dd>
+                <dt><?= $escaper->escapeHtml(__('City')) ?></dt><dd><?= $escaper->escapeHtml($value($request->getData('city'))) ?></dd>
+                <dt><?= $escaper->escapeHtml(__('Country')) ?></dt><dd><?= $escaper->escapeHtml($value($request->getData('country'))) ?></dd>
+            </dl>
+            <?php if ($request->getData('message')): ?>
+                <div class="igq-message"><?= $escaper->escapeHtml($request->getData('message')) ?></div>
+            <?php endif; ?>
+        </div>
+
+        <form class="igq-card" method="post" action="<?= $escaper->escapeUrl($block->getSaveUrl()) ?>">
+            <input name="form_key" type="hidden" value="<?= $escaper->escapeHtmlAttr($block->getFormKey()) ?>">
+            <h2><?= $escaper->escapeHtml(__('Follow-up')) ?></h2>
+            <div class="admin__field">
+                <label class="admin__field-label" for="igq-status"><span><?= $escaper->escapeHtml(__('Status')) ?></span></label>
+                <div class="admin__field-control">
+                    <select id="igq-status" name="status" class="admin__control-select">
+                        <?php foreach ($block->getStatuses() as $status): ?>
+                            <option value="<?= $escaper->escapeHtmlAttr($status['value']) ?>" <?= $status['value'] === $request->getData('status') ? 'selected' : '' ?>><?= $escaper->escapeHtml($status['label']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+            <div class="admin__field" style="margin-top:14px">
+                <label class="admin__field-label" for="igq-note"><span><?= $escaper->escapeHtml(__('Internal note')) ?></span></label>
+                <div class="admin__field-control">
+                    <textarea id="igq-note" name="admin_note" rows="5" class="admin__control-textarea" style="width:100%"><?= $escaper->escapeHtml((string)$request->getData('admin_note')) ?></textarea>
+                </div>
+            </div>
+            <div class="igq-actions">
+                <button type="submit" class="action-primary"><?= $escaper->escapeHtml(__('Save')) ?></button>
+            </div>
+        </form>
+
+        <form method="post" action="<?= $escaper->escapeUrl($block->getDeleteUrl()) ?>" onsubmit="return confirm('<?= $escaper->escapeJs(__('Delete this quote request?')) ?>');">
+            <input name="form_key" type="hidden" value="<?= $escaper->escapeHtmlAttr($block->getFormKey()) ?>">
+            <button type="submit" class="action-default"><?= $escaper->escapeHtml(__('Delete request')) ?></button>
+        </form>
+    </div>
+</div>

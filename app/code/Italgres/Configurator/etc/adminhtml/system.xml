@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="italgres" translate="label" sortOrder="15">
+            <label>Italgres</label>
+        </tab>
+        <section id="italgres_configurator" translate="label" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>3D Configurator</label>
+            <tab>italgres</tab>
+            <resource>Italgres_Configurator::config</resource>
+            <group id="purchase" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Purchase and Quote Requests</label>
+                <field id="quote_enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show "Request a Quote"</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Main call to action on configurator pages. Requests are listed under Sales > Quote Requests.</comment>
+                </field>
+                <field id="cart_enabled" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show "Add to Cart"</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Hidden by default. The add-to-cart flow stays in place and can be switched back on here.</comment>
+                </field>
+                <field id="quote_recipient" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Send Quote Requests To</label>
+                    <comment>One or more email addresses, comma separated.</comment>
+                    <depends>
+                        <field id="quote_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="quote_sender" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Email Sender</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Identity</source_model>
+                    <depends>
+                        <field id="quote_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="quote_admin_template" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Sales Team Email Template</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                    <depends>
+                        <field id="quote_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="quote_customer_copy" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Send Confirmation to Customer</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="quote_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="quote_customer_template" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Customer Email Template</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                    <depends>
+                        <field id="quote_enabled">1</field>
+                        <field id="quote_customer_copy">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

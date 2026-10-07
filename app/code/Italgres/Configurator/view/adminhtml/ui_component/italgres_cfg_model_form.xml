@@ -1,0 +1,186 @@
+<?xml version="1.0"?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">italgres_cfg_model_form.italgres_cfg_model_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">3D Model</item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+    </argument>
+    <settings>
+        <buttons>
+            <button name="back" class="Italgres\Configurator\Block\Adminhtml\Edit\BackButton"/>
+            <button name="delete" class="Italgres\Configurator\Block\Adminhtml\Edit\DeleteButton"/>
+            <button name="save_and_continue" class="Italgres\Configurator\Block\Adminhtml\Edit\SaveAndContinueButton"/>
+            <button name="save" class="Italgres\Configurator\Block\Adminhtml\Edit\SaveButton"/>
+        </buttons>
+        <namespace>italgres_cfg_model_form</namespace>
+        <dataScope>data</dataScope>
+        <deps>
+            <dep>italgres_cfg_model_form.italgres_cfg_model_form_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="italgres_cfg_model_form_data_source">
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+        <settings>
+            <submitUrl path="*/*/save"/>
+        </settings>
+        <dataProvider class="Italgres\Configurator\Ui\DataProvider\ModelFormDataProvider" name="italgres_cfg_model_form_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>model_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <fieldset name="general" sortOrder="10">
+        <settings>
+            <label translate="true">3D Model</label>
+        </settings>
+        <field name="model_id" formElement="input" sortOrder="10">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">ID</label>
+                <visible>false</visible>
+            </settings>
+        </field>
+        <field name="name" formElement="input" sortOrder="10">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Name</label>
+            </settings>
+        </field>
+        <field name="code" formElement="input" sortOrder="20">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Code</label>
+                <notice translate="true">Used by option values with the "Swap 3D model" action.</notice>
+            </settings>
+        </field>
+        <field name="file" formElement="fileUploader" sortOrder="30">
+            <settings>
+                <label translate="true">GLB File</label>
+                <notice translate="true">glTF binary (.glb), Y up, metres. Keep under ~10 MB for fast loading.</notice>
+                <componentType>fileUploader</componentType>
+            </settings>
+            <formElements>
+                <fileUploader>
+                    <settings>
+                        <allowedExtensions>glb</allowedExtensions>
+                        <maxFileSize>52428800</maxFileSize>
+                        <uploaderConfig>
+                            <param xsi:type="url" name="url" path="italgres_cfg/model/upload"/>
+                        </uploaderConfig>
+                    </settings>
+                </fileUploader>
+            </formElements>
+        </field>
+        <field name="is_active" formElement="checkbox" sortOrder="40">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="default" xsi:type="number">1</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>boolean</dataType>
+                <label translate="true">Active</label>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <valueMap>
+                            <map name="false" xsi:type="number">0</map>
+                            <map name="true" xsi:type="number">1</map>
+                        </valueMap>
+                        <prefer>toggle</prefer>
+                    </settings>
+                </checkbox>
+            </formElements>
+        </field>
+        <field name="slots" formElement="textarea" sortOrder="50">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Detected Parts</label>
+                <notice translate="true">Read from the GLB on save. Use these names in the "3D Parts" column of option values.</notice>
+                <disabled>true</disabled>
+            </settings>
+            <formElements>
+                <textarea>
+                    <settings>
+                        <rows>7</rows>
+                    </settings>
+                </textarea>
+            </formElements>
+        </field>
+        <field name="credits" formElement="input" sortOrder="60">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Credits / Licence</label>
+                <notice translate="true">Shown under the viewer, e.g. for CC-BY models.</notice>
+            </settings>
+        </field>
+    </fieldset>
+    <fieldset name="geometry" sortOrder="20">
+        <settings>
+            <label translate="true">Size and Stretching</label>
+            <collapsible>true</collapsible>
+            <opened>true</opened>
+        </settings>
+        <field name="base_width_cm" formElement="input" sortOrder="10">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Real Width (cm)</label>
+                <notice translate="true">Width of the product as modelled. Used for dimension labels and the "Stretch width" action.</notice>
+            </settings>
+        </field>
+        <field name="stretch_zone" formElement="input" sortOrder="20">
+            <settings>
+                <validation>
+                    <rule name="validate-number" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Stretch Zone (0-1)</label>
+                <notice translate="true">Share of the width, around the centre, that stretches when the width changes. Arms and ends outside it keep their shape.</notice>
+            </settings>
+        </field>
+        <field name="rigid_parts" formElement="input" sortOrder="30">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Rigid Parts</label>
+                <notice translate="true">Parts that move instead of stretching, e.g. legs, feet (comma separated, * wildcard).</notice>
+            </settings>
+        </field>
+        <field name="uv_scale" formElement="input" sortOrder="40">
+            <settings>
+                <validation>
+                    <rule name="validate-number" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Texture Scale</label>
+                <notice translate="true">Multiplies every material repeat on this model.</notice>
+            </settings>
+        </field>
+        <field name="rotation_y" formElement="input" sortOrder="50">
+            <settings>
+                <validation>
+                    <rule name="validate-number" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Rotation (deg)</label>
+                <notice translate="true">Turn the model so its front faces the camera.</notice>
+            </settings>
+        </field>
+    </fieldset>
+</form>

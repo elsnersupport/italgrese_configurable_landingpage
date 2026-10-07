@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Magento_Sales::sales">
+                    <resource id="Italgres_Configurator::quotes" title="Configurator Quote Requests" translate="title" sortOrder="60"/>
+                </resource>
+                <resource id="Magento_Catalog::catalog">
+                    <resource id="Italgres_Configurator::configurator" title="3D Configurator" translate="title" sortOrder="40">
+                        <resource id="Italgres_Configurator::materials" title="Materials Library" translate="title" sortOrder="10"/>
+                        <resource id="Italgres_Configurator::models" title="3D Models" translate="title" sortOrder="20"/>
+                    </resource>
+                </resource>
+                <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_settings">
+                        <resource id="Magento_Config::config">
+                            <resource id="Italgres_Configurator::config" title="Italgres 3D Configurator" translate="title"/>
+                        </resource>
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

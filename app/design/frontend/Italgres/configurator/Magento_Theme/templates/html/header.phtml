@@ -1,0 +1,61 @@
+<?php
+/**
+ * Italgres demo header: wordmark, configurator product switcher, selection count.
+ */
+declare(strict_types=1);
+
+use Italgres\DemoMode\ViewModel\DemoNav;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var DemoNav $nav */
+$nav = $block->getData('demo_nav');
+$products = $nav ? $nav->getProducts() : [];
+$brand = $nav ? $nav->getBrandName() : 'Italgres';
+/** @var \Magento\Theme\Block\Html\Header\Logo|null $logo */
+$logo = $block->getChildBlock('logo');
+$logoSrc = $logo ? $logo->getLogoSrc() : null;
+$logoWidth = $logo ? ((int)$logo->getLogoWidth() ?: 147) : 147;
+$logoHeight = $logo ? ((int)$logo->getLogoHeight() ?: 46) : 46;
+?>
+<div class="ig-header"
+     x-data="{ count: 0 }"
+     @private-content-loaded.window="count = (($event.detail.data || {}).cart || {}).summary_count || 0">
+    <a class="ig-header__brand" href="<?= $escaper->escapeUrl($nav ? $nav->getHomeUrl() : $block->getBaseUrl()) ?>">
+        <?php if ($logoSrc): ?>
+            <img class="ig-header__logo" src="<?= $escaper->escapeUrl($logoSrc) ?>"
+                 alt="<?= $escaper->escapeHtmlAttr(($logo && $logo->getLogoAlt()) ? $logo->getLogoAlt() : $brand) ?>"
+                 width="<?= $logoWidth ?>" height="<?= $logoHeight ?>">
+        <?php else: ?>
+            <span class="ig-header__word"><?= $escaper->escapeHtml($brand) ?></span>
+        <?php endif; ?>
+        <?php if ($nav && $nav->getBadge()): ?>
+            <span class="ig-header__badge"><?= $escaper->escapeHtml($nav->getBadge()) ?></span>
+        <?php endif; ?>
+    </a>
+
+    <?php if (count($products) > 1): ?>
+        <nav class="ig-header__nav" aria-label="<?= $escaper->escapeHtmlAttr(__('Configurable pieces')) ?>">
+            <?php foreach ($products as $product): ?>
+                <a href="<?= $escaper->escapeUrl($product['url']) ?>"
+                   class="ig-header__link<?= $product['active'] ? ' is-active' : '' ?>"
+                   <?= $product['active'] ? 'aria-current="page"' : '' ?>><?= $escaper->escapeHtml($product['name']) ?></a>
+            <?php endforeach; ?>
+        </nav>
+    <?php endif; ?>
+
+    <?php if ($nav && $nav->isCartEnabled()): ?>
+    <button type="button" class="ig-header__bag" @click="$dispatch('ig-open-drawer')">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+        <span class="ig-header__bag-label"><?= $escaper->escapeHtml(__('Selection')) ?></span>
+        <span class="ig-header__count" x-text="count" x-show="count > 0" x-cloak></span>
+    </button>
+    <?php else: ?>
+    <button type="button" class="ig-header__bag" @click="$dispatch('ig-open-quote')">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg>
+        <span class="ig-header__bag-label"><?= $escaper->escapeHtml(__('Request a quote')) ?></span>
+    </button>
+    <?php endif; ?>
+</div>

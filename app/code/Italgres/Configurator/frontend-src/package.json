@@ -1,0 +1,14 @@
+{
+  "name": "italgres-configurator-viewer",
+  "private": true,
+  "description": "Three.js viewer bundled into view/frontend/web/js/viewer.js",
+  "type": "module",
+  "scripts": {
+    "build": "esbuild viewer.js --bundle --format=esm --minify --target=es2020 --legal-comments=none --outfile=../view/frontend/web/js/viewer.js",
+    "watch": "esbuild viewer.js --bundle --format=esm --target=es2020 --sourcemap --outfile=../view/frontend/web/js/viewer.js --watch"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "three": "0.186.1"
+  }
+}

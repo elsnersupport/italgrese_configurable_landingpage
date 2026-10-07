@@ -1,0 +1,113 @@
+{
+    "italgres_cfg_material": {
+        "column": {
+            "material_id": true,
+            "code": true,
+            "name": true,
+            "family": true,
+            "color": true,
+            "map": true,
+            "normal_map": true,
+            "roughness_map": true,
+            "swatch": true,
+            "repeat_scale": true,
+            "roughness": true,
+            "metalness": true,
+            "sheen": true,
+            "sheen_color": true,
+            "clearcoat": true,
+            "normal_scale": true,
+            "description": true,
+            "is_active": true,
+            "sort_order": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "ITALGRES_CFG_MATERIAL_CODE": true
+        }
+    },
+    "italgres_cfg_model": {
+        "column": {
+            "model_id": true,
+            "code": true,
+            "name": true,
+            "file": true,
+            "base_width_cm": true,
+            "stretch_zone": true,
+            "rigid_parts": true,
+            "uv_scale": true,
+            "rotation_y": true,
+            "slots": true,
+            "credits": true,
+            "is_active": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "ITALGRES_CFG_MODEL_CODE": true
+        }
+    },
+    "catalog_product_option": {
+        "column": {
+            "ig_display": true,
+            "ig_note": true
+        }
+    },
+    "catalog_product_option_type_value": {
+        "column": {
+            "ig_action": true,
+            "ig_target": true,
+            "ig_material_id": true,
+            "ig_color": true,
+            "ig_param": true,
+            "ig_requires": true
+        },
+        "constraint": {
+            "FK_BCEEEF39D5C0602EE175AA2B2E720159": true
+        }
+    },
+    "italgres_cfg_quote_request": {
+        "column": {
+            "request_id": true,
+            "reference": true,
+            "status": true,
+            "store_id": true,
+            "product_id": true,
+            "product_sku": true,
+            "product_name": true,
+            "config_code": true,
+            "configuration": true,
+            "selected_options": true,
+            "dimensions": true,
+            "qty": true,
+            "unit_price": true,
+            "total_price": true,
+            "currency": true,
+            "share_url": true,
+            "snapshot": true,
+            "customer_name": true,
+            "email": true,
+            "phone": true,
+            "customer_type": true,
+            "company": true,
+            "city": true,
+            "country": true,
+            "contact_preference": true,
+            "message": true,
+            "admin_note": true,
+            "email_sent": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "index": {
+            "ITALGRES_CFG_QUOTE_REQUEST_STATUS": true,
+            "FTI_7FD98CB38F3FF22B37091C020C84BDF3": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

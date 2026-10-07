@@ -1,0 +1,11 @@
+/* Product edit > Customizable Options: room for the configurator columns. */
+[data-index="custom_options"] [data-index="values"] .admin__control-table { min-width: 1280px; }
+[data-index="custom_options"] [data-index="values"] { overflow-x: auto; }
+[data-index="custom_options"] [data-index="values"] td[data-index="title"] .admin__control-text,
+[data-index="custom_options"] [data-index="values"] td .admin__field[data-index="title"] .admin__control-text { min-width: 170px; }
+[data-index="custom_options"] [data-index="values"] .admin__field[data-index="ig_target"] .admin__control-text { min-width: 150px; }
+[data-index="custom_options"] [data-index="values"] .admin__field[data-index="ig_param"] .admin__control-text { min-width: 130px; }
+[data-index="custom_options"] [data-index="values"] .admin__field[data-index="ig_requires"] .admin__control-text { min-width: 80px; }
+[data-index="custom_options"] [data-index="values"] .admin__field[data-index="ig_color"] .admin__control-text { min-width: 86px; }
+[data-index="custom_options"] [data-index="values"] .admin__field[data-index="ig_material_id"] .admin__control-select { max-width: 190px; }
+[data-index="custom_options"] [data-index="values"] .admin__field[data-index="sku"] .admin__control-text { min-width: 70px; }

@@ -1,0 +1,1259 @@
+<?php
+/**
+ * Italgres 3D configurator product page.
+ *
+ * Steps are the product's select-type custom options; their "3D" columns (see admin) say what each
+ * value does to the model. The Alpine component below owns the selection, applies dependency rules,
+ * prices the configuration and drives the Three.js viewer (web/js/viewer.js).
+ */
+declare(strict_types=1);
+
+use Italgres\Configurator\ViewModel\Configurator;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var Configurator $vm */
+$vm = $block->getData('view_model');
+$product = $vm->getProduct();
+if (!$product) {
+    return;
+}
+$config = $vm->getConfig();
+$config['viewerUrl'] = $block->getViewFileUrl('Italgres_Configurator::js/viewer.js');
+$features = $vm->getFeatures();
+$description = $vm->getDescriptionHtml();
+$credits = $vm->getCredits();
+$leadTime = $vm->getLeadTime();
+$quoteEnabled = $vm->isQuoteEnabled();
+$cartEnabled = $vm->isCartEnabled();
+?>
+<script type="application/json" id="ig-cfg-data"><?= /* @noEscape */ json_encode(
+    $config,
+    JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES
+) ?></script>
+
+<div class="ig-cfg"
+     x-data="igConfigurator()"
+     @keydown.escape.window="drawer = false; quoteOpen = false"
+     @ig-open-drawer.window="drawer = true"
+     @ig-open-quote.window="openQuote()"
+     @private-content-loaded.window="onSections($event.detail.data)">
+
+    <section class="ig-hero">
+        <!-- 3D stage -->
+        <div class="ig-stage" :class="'ig-bg-' + background" x-ref="stage">
+            <div class="ig-canvas" x-ref="canvas" aria-label="<?= $escaper->escapeHtmlAttr(__('3D view of %1', $product->getName())) ?>" role="img"></div>
+
+            <div class="ig-dims-layer" x-ref="dims" style="display:none" aria-hidden="true">
+                <span class="ig-dim-label" data-dim="width"></span>
+                <span class="ig-dim-label" data-dim="depth"></span>
+                <span class="ig-dim-label" data-dim="height"></span>
+            </div>
+
+            <div class="ig-hotspots" x-ref="hotspots" style="display:none">
+                <template x-for="side in ['left', 'right']" :key="side">
+                    <button type="button" class="ig-hotspot" :data-hotspot="side" x-show="canAddModule()" @click="addModule()"
+                            :aria-label="'<?= $escaper->escapeJs(__('Add a seat')) ?>'">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                        <span><?= $escaper->escapeHtml(__('Add seat')) ?></span>
+                    </button>
+                </template>
+            </div>
+
+            <div class="ig-loader" x-show="loading" x-transition.opacity.duration.400ms>
+                <div class="ig-loader__ring"></div>
+                <p class="ig-loader__text"><?= $escaper->escapeHtml(__('Preparing your piece')) ?> <span x-text="progress + '%'"></span></p>
+            </div>
+            <div class="ig-loader ig-loader--error" x-show="viewerError" x-cloak>
+                <p><?= $escaper->escapeHtml(__('The 3D view could not start on this device. You can still configure and order below.')) ?></p>
+            </div>
+
+            <div class="ig-stage__hint" x-show="!loading && !viewerError" x-transition.opacity>
+                <template x-if="hoverStep">
+                    <span><?= $escaper->escapeHtml(__('Click to edit')) ?> <strong x-text="hoverStep"></strong></span>
+                </template>
+                <template x-if="!hoverStep">
+                    <span><?= $escaper->escapeHtml(__('Drag to rotate · Scroll to zoom · Click a part to edit it')) ?></span>
+                </template>
+            </div>
+
+            <div class="ig-toolbar" x-show="!viewerError" role="toolbar" aria-label="<?= $escaper->escapeHtmlAttr(__('Viewer controls')) ?>">
+                <div class="ig-toolbar__group">
+                    <template x-for="view in views" :key="view.id">
+                        <button type="button" class="ig-tool ig-tool--text" @click="setView(view.id)" :class="{'is-active': activeView === view.id}" x-text="view.label"></button>
+                    </template>
+                </div>
+                <div class="ig-toolbar__group">
+                    <button type="button" class="ig-tool" @click="toggleDims()" :class="{'is-active': showDims}" title="<?= $escaper->escapeHtmlAttr(__('Dimensions')) ?>">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17 17 3l4 4L7 21z"/><path d="m7 13 2 2m1-5 2 2m1-5 2 2"/></svg>
+                        <span class="ig-sr"><?= $escaper->escapeHtml(__('Dimensions')) ?></span>
+                    </button>
+                    <button type="button" class="ig-tool" @click="toggleRotate()" :class="{'is-active': autoRotate}" title="<?= $escaper->escapeHtmlAttr(__('Auto-rotate')) ?>">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg>
+                        <span class="ig-sr"><?= $escaper->escapeHtml(__('Auto-rotate')) ?></span>
+                    </button>
+                    <button type="button" class="ig-tool" @click="cycleBackground()" title="<?= $escaper->escapeHtmlAttr(__('Backdrop')) ?>">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+                        <span class="ig-sr"><?= $escaper->escapeHtml(__('Backdrop')) ?></span>
+                    </button>
+                    <button type="button" class="ig-tool" @click="downloadImage()" title="<?= $escaper->escapeHtmlAttr(__('Save image')) ?>">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+                        <span class="ig-sr"><?= $escaper->escapeHtml(__('Save image')) ?></span>
+                    </button>
+                    <button type="button" class="ig-tool" @click="toggleFullscreen()" title="<?= $escaper->escapeHtmlAttr(__('Full screen')) ?>">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+                        <span class="ig-sr"><?= $escaper->escapeHtml(__('Full screen')) ?></span>
+                    </button>
+                </div>
+            </div>
+
+            <?php if ($credits): ?>
+                <p class="ig-stage__credits"><?= $escaper->escapeHtml($credits) ?></p>
+            <?php endif; ?>
+        </div>
+
+        <!-- Configuration panel -->
+        <aside class="ig-panel" x-ref="panel">
+            <header class="ig-panel__head">
+                <p class="ig-eyebrow"><?= $escaper->escapeHtml(__('Made to order · Configure yours')) ?></p>
+                <h1 class="ig-title"><?= $escaper->escapeHtml($product->getName()) ?></h1>
+                <?php if ($tagline = $vm->getTagline()): ?>
+                    <p class="ig-tagline"><?= $escaper->escapeHtml($tagline) ?></p>
+                <?php endif; ?>
+                <div class="ig-price-row">
+                    <span class="ig-price" x-text="money(displayTotal)"></span>
+                    <span class="ig-price-note" x-show="dims" x-text="dims ? dims.width + ' × ' + dims.depth + ' × ' + dims.height + ' cm' : ''"></span>
+                </div>
+                <?php if ($leadTime): ?>
+                    <p class="ig-lead"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg><?= $escaper->escapeHtml($leadTime) ?></p>
+                <?php endif; ?>
+            </header>
+
+            <ol class="ig-steps">
+                <template x-for="(option, index) in steps()" :key="option.id">
+                    <li class="ig-step" :class="{'is-open': openStep === option.id}" :id="'ig-step-' + option.id">
+                        <button type="button" class="ig-step__head" @click="toggleStep(option.id)" :aria-expanded="openStep === option.id">
+                            <span class="ig-step__num" x-text="String(index + 1).padStart(2, '0')"></span>
+                            <span class="ig-step__title" x-text="stepTitle(option)"></span>
+                            <span class="ig-step__value">
+                                <template x-if="option.display !== 'sequence' && selectedValue(option) && selectedValue(option).swatch">
+                                    <span class="ig-dot" :style="swatchStyle(selectedValue(option))"></span>
+                                </template>
+                                <span x-text="stepValue(option)"></span>
+                            </span>
+                            <svg class="ig-step__chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                        </button>
+                        <div class="ig-step__body" :aria-hidden="openStep !== option.id">
+                          <div class="ig-step__inner">
+                            <p class="ig-step__note" x-show="option.note" x-text="option.note"></p>
+
+                            <template x-if="option.display === 'stepper'">
+                                <div class="ig-stepper">
+                                    <button type="button" class="ig-stepper__btn" @click="stepOption(option, -1)" :disabled="!canStep(option, -1)" aria-label="<?= $escaper->escapeHtmlAttr(__('Fewer')) ?>">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg>
+                                    </button>
+                                    <div class="ig-stepper__value">
+                                        <span class="ig-stepper__title" x-text="selectedValue(option) ? selectedValue(option).title : ''"></span>
+                                        <span class="ig-stepper__price" x-text="selectedValue(option) ? priceLabel(selectedValue(option)) : ''"></span>
+                                    </div>
+                                    <button type="button" class="ig-stepper__btn" @click="stepOption(option, 1)" :disabled="!canStep(option, 1)" aria-label="<?= $escaper->escapeHtmlAttr(__('More')) ?>">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                                    </button>
+                                </div>
+                            </template>
+                            <template x-if="option.display === 'sequence'">
+                                <div class="ig-seq">
+                                    <div class="ig-values ig-values--module">
+                                        <template x-for="value in addableValues(option)" :key="'add-' + value.id">
+                                            <button type="button" class="ig-value ig-value--add" @click="addElement(option, value)" :disabled="!nextSlot(option)" :title="value.title">
+                                                <span class="ig-value__swatch" :style="swatchStyle(value)"></span>
+                                                <span class="ig-value__text">
+                                                    <span class="ig-value__title" x-text="value.title"></span>
+                                                    <span class="ig-value__price" x-text="priceLabel(value)"></span>
+                                                </span>
+                                                <span class="ig-value__plus" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+                                            </button>
+                                        </template>
+                                    </div>
+                                    <p class="ig-seq__title"><?= $escaper->escapeHtml(__('Elements in your configuration')) ?></p>
+                                    <ol class="ig-seq__list">
+                                        <template x-for="(slot, n) in filledSlots(option)" :key="'slot-' + slot.id">
+                                            <li class="ig-seq__item">
+                                                <span class="ig-seq__num" x-text="n + 1"></span>
+                                                <span class="ig-seq__thumb" :style="swatchStyle(selectedValue(slot))"></span>
+                                                <span class="ig-seq__name" x-text="selectedValue(slot) ? selectedValue(slot).title : ''"></span>
+                                                <span class="ig-seq__price" x-text="selectedValue(slot) ? priceLabel(selectedValue(slot)) : ''"></span>
+                                                <button type="button" class="ig-seq__remove" @click="removeElement(option, n)" aria-label="<?= $escaper->escapeHtmlAttr(__('Remove')) ?>">×</button>
+                                            </li>
+                                        </template>
+                                        <li class="ig-seq__empty" x-show="!filledSlots(option).length"><?= $escaper->escapeHtml(__('No elements yet: add one above.')) ?></li>
+                                    </ol>
+                                </div>
+                            </template>
+                            <template x-if="option.display === 'swatch' && swatchGroups(option).length > 1">
+                                <div class="ig-swatch-groups">
+                                    <template x-for="(group, g) in swatchGroups(option)" :key="'g-' + group.key">
+                                        <div class="ig-swatch-group">
+                                            <p class="ig-swatch-group__family" x-show="!g || swatchGroups(option)[g - 1].family !== group.family" x-text="familyLabel(group.family)"></p>
+                                            <p class="ig-swatch-group__name"><span x-text="group.name"></span> <span class="ig-muted" x-text="priceLabel(group.values[0])"></span></p>
+                                            <div class="ig-values ig-values--swatch">
+                                                <template x-for="value in group.values" :key="value.id">
+                                                    <button type="button" class="ig-value"
+                                                            :class="{'is-selected': selected[option.id] === value.id}"
+                                                            @click="select(option, value)"
+                                                            :title="value.title"
+                                                            :aria-pressed="selected[option.id] === value.id">
+                                                        <span class="ig-value__swatch" :style="swatchStyle(value)"></span>
+                                                    </button>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                            <template x-if="option.display !== 'stepper' && option.display !== 'sequence' && !(option.display === 'swatch' && swatchGroups(option).length > 1)">
+                            <div class="ig-values" :class="'ig-values--' + option.display">
+                                <template x-for="value in availableValues(option)" :key="value.id">
+                                    <button type="button" class="ig-value"
+                                            :class="{'is-selected': selected[option.id] === value.id}"
+                                            @click="select(option, value)"
+                                            @mouseenter="previewHint(option, value)"
+                                            :title="value.title"
+                                            :aria-pressed="selected[option.id] === value.id">
+                                        <template x-if="option.display !== 'pill'">
+                                            <span class="ig-value__swatch" :style="swatchStyle(value)">
+                                                <template x-if="!value.swatch && !elementThumb(value)"><span class="ig-value__initial" x-text="value.title.charAt(0)"></span></template>
+                                            </span>
+                                        </template>
+                                        <span class="ig-value__text" x-show="option.display !== 'swatch'">
+                                            <span class="ig-value__title" x-text="value.title"></span>
+                                            <span class="ig-value__price" x-text="priceLabel(value)"></span>
+                                        </span>
+                                    </button>
+                                </template>
+                            </div>
+                            </template>
+                            <p class="ig-step__selected" x-show="option.display === 'swatch' && selectedValue(option)">
+                                <span x-text="selectedValue(option) ? selectedValue(option).title : ''"></span>
+                                <span class="ig-muted" x-text="selectedValue(option) ? priceLabel(selectedValue(option)) : ''"></span>
+                            </p>
+
+                            <button type="button" class="ig-next" x-show="nextOption(option)" @click="openStep = nextOption(option).id; scrollToStep(openStep)">
+                                <span><?= $escaper->escapeHtml(__('Next:')) ?></span> <span x-text="nextOption(option) ? stepTitle(nextOption(option)) : ''"></span>
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+                            </button>
+                            <button type="button" class="ig-next" x-show="!nextOption(option)" @click="openStep = null; $refs.summary.scrollIntoView({behavior: 'smooth', block: 'nearest'})">
+                                <span><?= $escaper->escapeHtml(__('Review your configuration')) ?></span>
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+                            </button>
+                          </div>
+                        </div>
+                    </li>
+                </template>
+            </ol>
+
+            <div class="ig-summary" x-ref="summary">
+                <h2 class="ig-summary__title"><?= $escaper->escapeHtml(__('Your configuration')) ?></h2>
+                <dl class="ig-summary__list">
+                    <div class="ig-summary__row">
+                        <dt><?= $escaper->escapeHtml(__('Base price')) ?></dt>
+                        <dd x-text="money(config.price.base)"></dd>
+                    </div>
+                    <template x-for="row in summary()" :key="row.option">
+                        <div class="ig-summary__row">
+                            <dt x-text="row.option"></dt>
+                            <dd><span x-text="row.value"></span> <span class="ig-muted" x-show="row.price" x-text="(row.price > 0 ? '+' : '−') + money(Math.abs(row.price))"></span></dd>
+                        </div>
+                    </template>
+                </dl>
+                <p class="ig-code"><?= $escaper->escapeHtml(__('Configuration code')) ?> <code x-text="code()"></code></p>
+                <div class="ig-summary__actions">
+                    <button type="button" class="ig-link" @click="copyLink()">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1"/><path d="M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/></svg>
+                        <?= $escaper->escapeHtml(__('Share this configuration')) ?>
+                    </button>
+                    <button type="button" class="ig-link" @click="reset()">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.34-5.66"/><path d="M4 4v5h5"/></svg>
+                        <?= $escaper->escapeHtml(__('Start over')) ?>
+                    </button>
+                </div>
+            </div>
+
+            <div class="ig-buy">
+                <div class="ig-qty" role="group" aria-label="<?= $escaper->escapeHtmlAttr(__('Quantity')) ?>">
+                    <button type="button" @click="qty = Math.max(1, qty - 1)" aria-label="<?= $escaper->escapeHtmlAttr(__('Decrease quantity')) ?>">−</button>
+                    <span x-text="qty"></span>
+                    <button type="button" @click="qty = Math.min(20, qty + 1)" aria-label="<?= $escaper->escapeHtmlAttr(__('Increase quantity')) ?>">+</button>
+                </div>
+                <?php if ($quoteEnabled): ?>
+                    <button type="button" class="ig-cta" @click="openQuote()">
+                        <?= $escaper->escapeHtml(__('Request a quote')) ?> · <span x-text="money(total() * qty)"></span>
+                    </button>
+                <?php endif; ?>
+                <?php if ($cartEnabled): ?>
+                    <button type="button" class="ig-cta<?= $quoteEnabled ? ' ig-cta--ghost' : '' ?>" @click="addToCart()" :disabled="adding" :class="{'is-busy': adding}">
+                        <span x-show="!adding"><?= $escaper->escapeHtml(__('Add to cart')) ?><?php if (!$quoteEnabled): ?> · <span x-text="money(total() * qty)"></span><?php endif; ?></span>
+                        <span x-show="adding" x-cloak><?= $escaper->escapeHtml(__('Adding…')) ?></span>
+                    </button>
+                <?php endif; ?>
+            </div>
+            <?php if ($quoteEnabled): ?>
+                <p class="ig-buy__note"><?= $escaper->escapeHtml(__('No commitment. Our design team replies within one working day with a personalised quote, lead time and delivery options.')) ?></p>
+            <?php endif; ?>
+            <ul class="ig-assurance">
+                <li><?= $escaper->escapeHtml(__('Handcrafted in Italy to your specification')) ?></li>
+                <li><?= $escaper->escapeHtml(__('Free white-glove delivery & installation')) ?></li>
+                <li><?= $escaper->escapeHtml(__('10-year structural warranty')) ?></li>
+            </ul>
+        </aside>
+    </section>
+
+    <!-- Mobile sticky purchase bar -->
+    <div class="ig-mobile-bar">
+        <div>
+            <span class="ig-mobile-bar__price" x-text="money(displayTotal)"></span>
+            <span class="ig-mobile-bar__code" x-text="code()"></span>
+        </div>
+        <?php if ($quoteEnabled): ?>
+            <button type="button" class="ig-cta" @click="openQuote()"><?= $escaper->escapeHtml(__('Request a quote')) ?></button>
+        <?php elseif ($cartEnabled): ?>
+            <button type="button" class="ig-cta" @click="addToCart()" :disabled="adding"><?= $escaper->escapeHtml(__('Add to cart')) ?></button>
+        <?php endif; ?>
+    </div>
+
+    <!-- Product story -->
+    <section class="ig-story">
+        <div class="ig-story__intro">
+            <p class="ig-eyebrow"><?= $escaper->escapeHtml(__('The piece')) ?></p>
+            <h2 class="ig-story__title"><?= $escaper->escapeHtml($product->getName()) ?></h2>
+            <?php if ($description): ?>
+                <div class="ig-story__text"><?= /* @noEscape */ $description ?></div>
+            <?php endif; ?>
+        </div>
+        <?php if ($features): ?>
+            <ul class="ig-features">
+                <?php foreach ($features as $i => $feature): ?>
+                    <li class="ig-feature">
+                        <span class="ig-feature__num"><?= sprintf('%02d', $i + 1) ?></span>
+                        <h3 class="ig-feature__title"><?= $escaper->escapeHtml($feature['title']) ?></h3>
+                        <p class="ig-feature__text"><?= $escaper->escapeHtml($feature['text']) ?></p>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
+
+        <div class="ig-specs">
+            <h2 class="ig-specs__title"><?= $escaper->escapeHtml(__('Specification')) ?></h2>
+            <dl class="ig-specs__list">
+                <div x-show="dims">
+                    <dt><?= $escaper->escapeHtml(__('Dimensions (W × D × H)')) ?></dt>
+                    <dd x-text="dims ? dims.width + ' × ' + dims.depth + ' × ' + dims.height + ' cm' : ''"></dd>
+                </div>
+                <template x-for="row in summary()" :key="'spec-' + row.option">
+                    <div>
+                        <dt x-text="row.option"></dt>
+                        <dd x-text="row.value"></dd>
+                    </div>
+                </template>
+                <div>
+                    <dt><?= $escaper->escapeHtml(__('Reference')) ?></dt>
+                    <dd x-text="code()"></dd>
+                </div>
+            </dl>
+        </div>
+
+        <div class="ig-library" x-show="libraryMaterials().length">
+            <h2 class="ig-specs__title"><?= $escaper->escapeHtml(__('Materials for this piece')) ?></h2>
+            <ul class="ig-library__list">
+                <template x-for="material in libraryMaterials()" :key="material.id">
+                    <li class="ig-library__item">
+                        <span class="ig-library__swatch" :style="material.swatch ? 'background-image:url(' + material.swatch + ')' : 'background:' + material.color"></span>
+                        <span class="ig-library__name" x-text="material.name"></span>
+                        <span class="ig-library__family" x-text="material.family"></span>
+                    </li>
+                </template>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Selection drawer -->
+    <div class="ig-drawer-backdrop" x-show="drawer" x-transition.opacity @click="drawer = false" x-cloak></div>
+    <aside class="ig-drawer" x-show="drawer" x-cloak
+           x-transition:enter="ig-drawer-enter" x-transition:enter-start="ig-drawer-from" x-transition:enter-end="ig-drawer-to"
+           x-transition:leave="ig-drawer-enter" x-transition:leave-start="ig-drawer-to" x-transition:leave-end="ig-drawer-from"
+           role="dialog" aria-modal="true" aria-label="<?= $escaper->escapeHtmlAttr(__('Your selection')) ?>">
+        <header class="ig-drawer__head">
+            <h2><?= $escaper->escapeHtml(__('Your selection')) ?> <span class="ig-muted" x-text="'(' + cart.count + ')'"></span></h2>
+            <button type="button" class="ig-drawer__close" @click="drawer = false" aria-label="<?= $escaper->escapeHtmlAttr(__('Close')) ?>">×</button>
+        </header>
+        <ul class="ig-drawer__items">
+            <template x-for="item in cart.items" :key="item.item_id">
+                <li class="ig-drawer__item">
+                    <img :src="thumbFor(item)" alt="" class="ig-drawer__thumb" loading="lazy">
+                    <div class="ig-drawer__info">
+                        <p class="ig-drawer__name" x-text="item.product_name"></p>
+                        <ul class="ig-drawer__options">
+                            <template x-for="opt in (item.options || [])" :key="opt.label">
+                                <li><span x-text="opt.label"></span>: <span x-html="opt.value"></span></li>
+                            </template>
+                        </ul>
+                        <p class="ig-drawer__meta"><span x-text="'Qty ' + item.qty"></span> · <span x-html="item.product_price"></span></p>
+                    </div>
+                    <button type="button" class="ig-drawer__remove" @click="removeItem(item.item_id)" aria-label="<?= $escaper->escapeHtmlAttr(__('Remove')) ?>">×</button>
+                </li>
+            </template>
+            <li class="ig-drawer__empty" x-show="!cart.items.length"><?= $escaper->escapeHtml(__('Nothing here yet.')) ?></li>
+        </ul>
+        <footer class="ig-drawer__foot">
+            <p class="ig-drawer__subtotal"><span><?= $escaper->escapeHtml(__('Subtotal')) ?></span> <span x-html="cart.subtotal"></span></p>
+            <button type="button" class="ig-cta" disabled><?= $escaper->escapeHtml(__('Checkout')) ?></button>
+            <p class="ig-drawer__note"><?= $escaper->escapeHtml(__('Preview environment: checkout is disabled. The configured item, its options and price are stored in the Magento cart exactly as they would be at checkout.')) ?></p>
+            <button type="button" class="ig-link" @click="drawer = false"><?= $escaper->escapeHtml(__('Continue configuring')) ?></button>
+        </footer>
+    </aside>
+
+    <?php if ($quoteEnabled): ?>
+    <!-- Request a quote -->
+    <div class="ig-drawer-backdrop" x-show="quoteOpen" x-transition.opacity @click="quoteOpen = false" x-cloak></div>
+    <aside class="ig-drawer ig-quote" x-show="quoteOpen" x-cloak
+           x-transition:enter="ig-drawer-enter" x-transition:enter-start="ig-drawer-from" x-transition:enter-end="ig-drawer-to"
+           x-transition:leave="ig-drawer-enter" x-transition:leave-start="ig-drawer-to" x-transition:leave-end="ig-drawer-from"
+           role="dialog" aria-modal="true" aria-labelledby="ig-quote-title">
+        <header class="ig-drawer__head">
+            <h2 id="ig-quote-title"><?= $escaper->escapeHtml(__('Request a quote')) ?></h2>
+            <button type="button" class="ig-drawer__close" @click="quoteOpen = false" aria-label="<?= $escaper->escapeHtmlAttr(__('Close')) ?>">×</button>
+        </header>
+        <div class="ig-quote__body">
+            <div class="ig-quote__summary">
+                <img :src="quoteThumb" alt="" class="ig-quote__thumb" x-show="quoteThumb">
+                <div>
+                    <p class="ig-quote__product"><?= $escaper->escapeHtml($product->getName()) ?></p>
+                    <p class="ig-quote__code" x-text="code()"></p>
+                    <p class="ig-quote__price"><span x-text="money(total() * qty)"></span> <span class="ig-muted" x-show="qty > 1" x-text="'(' + qty + ' × ' + money(total()) + ')'"></span></p>
+                </div>
+            </div>
+            <ul class="ig-quote__config">
+                <template x-for="row in summary()" :key="'q-' + row.option">
+                    <li><span x-text="row.option"></span><span x-text="row.value"></span></li>
+                </template>
+                <li x-show="dims"><span><?= $escaper->escapeHtml(__('Dimensions')) ?></span><span x-text="dimsLabel()"></span></li>
+            </ul>
+
+            <template x-if="!quoteDone">
+                <form class="ig-form" @submit.prevent="submitQuote()" novalidate>
+                    <div class="ig-form__row">
+                        <label class="ig-field">
+                            <span><?= $escaper->escapeHtml(__('Full name')) ?> *</span>
+                            <input type="text" x-model="quote.name" autocomplete="name" required maxlength="255">
+                        </label>
+                    </div>
+                    <div class="ig-form__row ig-form__row--2">
+                        <label class="ig-field">
+                            <span><?= $escaper->escapeHtml(__('Email')) ?> *</span>
+                            <input type="email" x-model="quote.email" autocomplete="email" required maxlength="255">
+                        </label>
+                        <label class="ig-field">
+                            <span><?= $escaper->escapeHtml(__('Phone')) ?></span>
+                            <input type="tel" x-model="quote.phone" autocomplete="tel" maxlength="64">
+                        </label>
+                    </div>
+                    <div class="ig-form__row ig-form__row--2">
+                        <label class="ig-field">
+                            <span><?= $escaper->escapeHtml(__('City')) ?></span>
+                            <input type="text" x-model="quote.city" autocomplete="address-level2" maxlength="128">
+                        </label>
+                        <label class="ig-field">
+                            <span><?= $escaper->escapeHtml(__('Country')) ?></span>
+                            <input type="text" x-model="quote.country" autocomplete="country-name" maxlength="64">
+                        </label>
+                    </div>
+                    <fieldset class="ig-choice">
+                        <legend><?= $escaper->escapeHtml(__('I am a')) ?></legend>
+                        <label><input type="radio" value="homeowner" x-model="quote.customer_type"> <?= $escaper->escapeHtml(__('Homeowner')) ?></label>
+                        <label><input type="radio" value="designer" x-model="quote.customer_type"> <?= $escaper->escapeHtml(__('Designer / architect')) ?></label>
+                        <label><input type="radio" value="trade" x-model="quote.customer_type"> <?= $escaper->escapeHtml(__('Trade')) ?></label>
+                    </fieldset>
+                    <div class="ig-form__row" x-show="quote.customer_type !== 'homeowner'">
+                        <label class="ig-field">
+                            <span><?= $escaper->escapeHtml(__('Company or studio')) ?></span>
+                            <input type="text" x-model="quote.company" autocomplete="organization" maxlength="255">
+                        </label>
+                    </div>
+                    <fieldset class="ig-choice">
+                        <legend><?= $escaper->escapeHtml(__('Contact me by')) ?></legend>
+                        <label><input type="radio" value="email" x-model="quote.contact_preference"> <?= $escaper->escapeHtml(__('Email')) ?></label>
+                        <label><input type="radio" value="phone" x-model="quote.contact_preference"> <?= $escaper->escapeHtml(__('Phone')) ?></label>
+                        <label><input type="radio" value="whatsapp" x-model="quote.contact_preference"> WhatsApp</label>
+                    </fieldset>
+                    <label class="ig-field">
+                        <span><?= $escaper->escapeHtml(__('Message')) ?></span>
+                        <textarea rows="3" x-model="quote.message" maxlength="3000" placeholder="<?= $escaper->escapeHtmlAttr(__('Room size, delivery date, questions about materials…')) ?>"></textarea>
+                    </label>
+                    <label class="ig-hp" aria-hidden="true">Website <input type="text" tabindex="-1" autocomplete="off" x-model="quote.website"></label>
+                    <label class="ig-consent">
+                        <input type="checkbox" x-model="quote.consent">
+                        <span><?= $escaper->escapeHtml(__('I agree that Italgres may contact me about this request and store my details for that purpose.')) ?></span>
+                    </label>
+                    <p class="ig-form__error" x-show="quoteError" x-text="quoteError" role="alert"></p>
+                    <button type="submit" class="ig-cta" :disabled="quoteSending">
+                        <span x-show="!quoteSending"><?= $escaper->escapeHtml(__('Send request')) ?></span>
+                        <span x-show="quoteSending" x-cloak><?= $escaper->escapeHtml(__('Sending…')) ?></span>
+                    </button>
+                </form>
+            </template>
+
+            <template x-if="quoteDone">
+                <div class="ig-quote__done">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m7.5 12.5 3 3 6-7"/></svg>
+                    <h3><?= $escaper->escapeHtml(__('Thank you, your request is on its way.')) ?></h3>
+                    <p><?= $escaper->escapeHtml(__('Reference')) ?> <strong x-text="quoteDone"></strong></p>
+                    <p class="ig-muted"><?= $escaper->escapeHtml(__('We have emailed you a copy of this configuration. Our design team will reply within one working day.')) ?></p>
+                    <button type="button" class="ig-link" @click="quoteOpen = false"><?= $escaper->escapeHtml(__('Continue configuring')) ?></button>
+                </div>
+            </template>
+        </div>
+    </aside>
+    <?php endif; ?>
+
+    <div class="ig-toast" x-show="toast" x-transition x-cloak role="status" aria-live="polite">
+        <span x-text="toast ? toast.text : ''"></span>
+    </div>
+</div>
+
+<script>
+    function igConfigurator() {
+        const config = JSON.parse(document.getElementById('ig-cfg-data').textContent);
+        const money = new Intl.NumberFormat(config.price.locale || 'en-US', {
+            style: 'currency', currency: config.price.currency || 'USD', maximumFractionDigits: 0
+        });
+        const globToRe = (p) => new RegExp('^' + p.trim().replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*') + '$', 'i');
+        const patterns = (t) => String(t || '').split(/[,\n]+/).map((s) => s.trim()).filter(Boolean);
+        const skuToOption = {};
+        const valueBySku = {};
+        config.options.forEach((o) => o.values.forEach((v) => {
+            if (v.sku) {
+                skuToOption[v.sku] = o.id;
+                valueBySku[v.sku] = {option: o, value: v};
+            }
+        }));
+        // Kept outside Alpine's reactive state: a proxied Three.js scene breaks identity checks and is slow.
+        let viewer = null;
+        let applySeq = 0;
+        let thumbsFor = null;
+        const backgrounds = {
+            studio: ['#f6f2ec', '#e9e2d8'],
+            gallery: ['#eceae6', '#d8d4cd'],
+            night: ['#2b2926', '#191816'],
+            white: ['#fbfbfa', '#efefed'],
+        };
+        const families = {
+            fabric: '<?= $escaper->escapeJs(__('Fabrics')) ?>',
+            leather: '<?= $escaper->escapeJs(__('Leathers')) ?>',
+            wood: '<?= $escaper->escapeJs(__('Woods')) ?>',
+            metal: '<?= $escaper->escapeJs(__('Metals')) ?>',
+            porcelain: '<?= $escaper->escapeJs(__('Porcelain')) ?>',
+        };
+        const isMirror = (value) => /mirror/i.test(value.param || '');
+        const isEmptyElement = (value) => value.action === 'compose' && !value.target;
+
+        return {
+            config,
+            selected: {},
+            openStep: null,
+            loading: true,
+            progress: 0,
+            viewerError: false,
+            background: backgrounds[config.scene] ? config.scene : 'studio',
+            showDims: false,
+            autoRotate: config.view !== 'front' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+            activeView: config.view || 'angle',
+            views: [
+                {id: 'front', label: '<?= $escaper->escapeJs(__('Front')) ?>'},
+                {id: 'angle', label: '¾'},
+                {id: 'side', label: '<?= $escaper->escapeJs(__('Side')) ?>'},
+                {id: 'top', label: '<?= $escaper->escapeJs(__('Top')) ?>'},
+                {id: 'detail', label: '<?= $escaper->escapeJs(__('Detail')) ?>'},
+            ],
+            hoverStep: null,
+            thumbs: {},
+            dims: null,
+            qty: 1,
+            adding: false,
+            drawer: false,
+            cart: {items: [], count: 0, subtotal: ''},
+            toast: null,
+            displayTotal: 0,
+            quoteOpen: false,
+            quoteSending: false,
+            quoteDone: null,
+            quoteError: '',
+            quoteThumb: '',
+            quote: {
+                name: '', email: '', phone: '', city: '', country: '', company: '', message: '',
+                customer_type: 'homeowner', contact_preference: 'email', consent: false, website: '',
+            },
+
+            init() {
+                this.applySelection(this.sharedSelection());
+                this.openStep = this.visibleOptions()[0] ? this.visibleOptions()[0].id : null;
+                this.displayTotal = this.total();
+                this.bootViewer();
+            },
+
+            /* ---------- selection and rules ---------- */
+
+            selectedValue(option) {
+                const id = this.selected[option.id];
+                return id ? option.values.find((v) => v.id === id) || null : null;
+            },
+
+            isAvailable(value) {
+                const groups = {};
+                (value.requires || []).forEach((sku) => {
+                    const optionId = skuToOption[sku];
+                    if (optionId) (groups[optionId] = groups[optionId] || []).push(sku);
+                });
+                return Object.entries(groups).every(([optionId, skus]) => {
+                    const option = config.options.find((o) => o.id === Number(optionId));
+                    const current = option ? this.selectedValue(option) : null;
+                    return current && skus.includes(current.sku);
+                });
+            },
+
+            availableValues(option) {
+                return option.values.filter((v) => this.isAvailable(v));
+            },
+
+            visibleOptions() {
+                return config.options.filter((o) => this.availableValues(o).length > 0);
+            },
+
+            nextOption(option) {
+                const list = this.steps();
+                const i = list.findIndex((o) => o.id === option.id);
+                return i >= 0 && i < list.length - 1 ? list[i + 1] : null;
+            },
+
+            /* ---------- steps and element rows ---------- */
+
+            /** Panel steps: consecutive "sequence" options (element slots) fold into the first one */
+            steps() {
+                return this.visibleOptions().filter((o, i, list) => !(o.display === 'sequence' && i > 0 && list[i - 1].display === 'sequence'));
+            },
+
+            /** The panel step an option is shown in */
+            stepOf(optionId) {
+                const list = this.visibleOptions();
+                let i = list.findIndex((o) => o.id === optionId);
+                if (i < 0) return null;
+                while (list[i].display === 'sequence' && i > 0 && list[i - 1].display === 'sequence') i--;
+                return list[i];
+            },
+
+            stepTitle(option) {
+                return option.display === 'sequence' ? option.title.replace(/\s*\d+$/, '') : option.title;
+            },
+
+            stepValue(option) {
+                if (option.display === 'sequence') {
+                    const names = this.filledSlots(option).map((slot) => this.selectedValue(slot).title);
+                    return names.length ? names.join(' + ') : '<?= $escaper->escapeJs(__('None')) ?>';
+                }
+                const value = this.selectedValue(option);
+                return value ? value.title : '';
+            },
+
+            /** Every slot option of the run a sequence step starts, visible or not */
+            allSlotsOf(step) {
+                const i = config.options.findIndex((o) => o.id === step.id);
+                const slots = [];
+                for (let k = i; k >= 0 && k < config.options.length && config.options[k].display === 'sequence'; k++) {
+                    slots.push(config.options[k]);
+                }
+                return slots;
+            },
+
+            filledSlots(step) {
+                const filled = [];
+                for (const slot of this.allSlotsOf(step)) {
+                    const value = this.selectedValue(slot);
+                    if (!value || isEmptyElement(value) || !this.availableValues(slot).length) break;
+                    filled.push(slot);
+                }
+                return filled;
+            },
+
+            nextSlot(step) {
+                return this.allSlotsOf(step).find((slot) => {
+                    const value = this.selectedValue(slot);
+                    return this.availableValues(slot).length && (!value || isEmptyElement(value));
+                }) || null;
+            },
+
+            /** Elements that can be added: the next free slot's choices (with that slot's price) */
+            addableValues(step) {
+                const slots = this.allSlotsOf(step);
+                const slot = this.nextSlot(step) || slots[slots.length - 1];
+                return slot ? slot.values.filter((v) => v.action === 'compose' && v.target) : [];
+            },
+
+            addElement(step, value) {
+                const slot = this.nextSlot(step);
+                const match = slot && this.availableValues(slot).find((v) => v.target === value.target && v.param === value.param);
+                if (!match) return;
+                this.select(slot, match);
+                this.openStep = step.id;
+                this.notify(`${match.title} · ${this.money(this.total())}`);
+            },
+
+            /** Removes element n and moves the ones after it up a slot */
+            removeElement(step, n) {
+                const slots = this.allSlotsOf(step);
+                const chosen = this.filledSlots(step).map((slot) => this.selectedValue(slot));
+                chosen.splice(n, 1);
+                slots.forEach((slot, k) => {
+                    const want = chosen[k];
+                    const value = slot.values.find((v) => (want ? v.target === want.target && v.param === want.param : isEmptyElement(v)));
+                    if (value) this.selected[slot.id] = value.id;
+                });
+                this.normalize();
+                this.refresh();
+            },
+
+            sequenceStep() {
+                return this.steps().find((o) => o.display === 'sequence') || null;
+            },
+
+            /** Swatches grouped by library material (collection), e.g. Fabrics › Mida */
+            swatchGroups(option) {
+                const groups = [];
+                this.availableValues(option).forEach((value) => {
+                    const material = value.materialId ? config.materials[value.materialId] : null;
+                    const key = material ? material.id : 0;
+                    let group = groups.find((g) => g.key === key);
+                    if (!group) {
+                        group = {key, name: material ? material.name : '', family: material ? material.family : '', values: []};
+                        groups.push(group);
+                    }
+                    group.values.push(value);
+                });
+                return groups;
+            },
+
+            familyLabel(family) {
+                return families[family] || family;
+            },
+
+            /** Keep every step valid; returns the steps whose value had to change */
+            normalize() {
+                const changed = [];
+                for (let pass = 0; pass < 2; pass++) {
+                    config.options.forEach((option) => {
+                        const available = this.availableValues(option);
+                        const current = this.selected[option.id];
+                        if (!available.length) {
+                            delete this.selected[option.id];
+                        } else if (!available.some((v) => v.id === current)) {
+                            // Default to the included (no surcharge) choice, so the opening price is the base price
+                            const fallback = available.find((v) => !this.valuePrice(v)) || available[0];
+                            this.selected[option.id] = fallback.id;
+                            if (current) changed.push({option, value: fallback});
+                        }
+                    });
+                }
+                return changed;
+            },
+
+            applySelection(preset) {
+                this.selected = {};
+                config.options.forEach((o) => {
+                    if (preset[o.id]) this.selected[o.id] = preset[o.id];
+                });
+                this.normalize();
+            },
+
+            select(option, value) {
+                if (this.selected[option.id] === value.id) return;
+                this.selected[option.id] = value.id;
+                const changed = this.normalize().filter((c) => c.option.id !== option.id);
+                if (changed.length) {
+                    const c = changed[0];
+                    this.notify(`${c.option.title}: ${c.value.title} — <?= $escaper->escapeJs(__('matched to your new choice')) ?>`);
+                }
+                this.refresh();
+            },
+
+            reset() {
+                this.applySelection({});
+                this.qty = 1;
+                this.openStep = this.visibleOptions()[0] ? this.visibleOptions()[0].id : null;
+                history.replaceState(null, '', location.pathname);
+                this.refresh();
+            },
+
+            toggleStep(id) {
+                this.openStep = this.openStep === id ? null : id;
+            },
+
+            scrollToStep(id) {
+                this.$nextTick(() => {
+                    const el = document.getElementById('ig-step-' + id);
+                    if (el) el.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+                });
+            },
+
+            previewHint() {},
+
+            /* ---------- pricing ---------- */
+
+            valuePrice(value) {
+                return value.priceType === 'percent' ? config.price.base * value.price / 100 : value.price;
+            },
+
+            total() {
+                return config.options.reduce((sum, o) => {
+                    const v = this.selectedValue(o);
+                    return v ? sum + this.valuePrice(v) : sum;
+                }, config.price.base);
+            },
+
+            money(amount) {
+                return money.format(Math.round(amount));
+            },
+
+            priceLabel(value) {
+                const p = this.valuePrice(value);
+                if (!p) return '<?= $escaper->escapeJs(__('Included')) ?>';
+                return (p > 0 ? '+' : '−') + this.money(Math.abs(p));
+            },
+
+            animatePrice() {
+                const from = this.displayTotal;
+                const to = this.total();
+                const start = performance.now();
+                const step = (now) => {
+                    const t = Math.min(1, (now - start) / 450);
+                    this.displayTotal = from + (to - from) * (1 - Math.pow(1 - t, 3));
+                    if (t < 1) requestAnimationFrame(step);
+                };
+                requestAnimationFrame(step);
+            },
+
+            summary() {
+                return this.visibleOptions().map((o) => {
+                    const v = this.selectedValue(o);
+                    // An empty element slot only matters when it changes the price
+                    if (!v || (isEmptyElement(v) && !this.valuePrice(v))) return null;
+                    return {option: o.title, value: v.title, price: this.valuePrice(v)};
+                }).filter(Boolean);
+            },
+
+            code() {
+                const parts = this.visibleOptions().map((o) => {
+                    const v = this.selectedValue(o);
+                    return v && v.sku ? v.sku : null;
+                }).filter(Boolean);
+                return [config.product.sku].concat(parts).join('-');
+            },
+
+            thumbKey(value) {
+                return `${value.target}|${isMirror(value) ? 1 : 0}`;
+            },
+
+            /** Live 3D preview of an element (rendered by the viewer in the current cover) */
+            elementThumb(value) {
+                return value && value.action === 'compose' && value.target ? this.thumbs[this.thumbKey(value)] || null : null;
+            },
+
+            refreshThumbs(look) {
+                const key = JSON.stringify(look.parts);
+                if (!viewer || key === thumbsFor) return;
+                const list = [];
+                const seen = new Set();
+                config.options.forEach((o) => o.values.forEach((v) => {
+                    if (v.action !== 'compose' || !v.target || seen.has(this.thumbKey(v))) return;
+                    seen.add(this.thumbKey(v));
+                    list.push({target: v.target, mirror: isMirror(v)});
+                }));
+                if (!list.length) return;
+                thumbsFor = key;
+                this.thumbs = viewer.renderThumbnails(list);
+            },
+
+            swatchStyle(value) {
+                const thumb = this.elementThumb(value);
+                if (thumb) return `background-image:url('${thumb}')`;
+                if (!value || !value.swatch) return '';
+                if (value.swatch.image) {
+                    return `background:${value.swatch.value} url('${value.swatch.image}') center/cover;background-blend-mode:multiply`;
+                }
+                return value.swatch.type === 'image'
+                    ? `background-image:url('${value.swatch.value}')`
+                    : `background:${value.swatch.value}`;
+            },
+
+            libraryMaterials() {
+                const ids = new Set();
+                config.options.forEach((o) => o.values.forEach((v) => v.materialId && ids.add(v.materialId)));
+                return [...ids].map((id) => config.materials[id]).filter(Boolean);
+            },
+
+            /* ---------- 3D ---------- */
+
+            look() {
+                const look = {model: null, widthCm: null, parts: [], visibility: []};
+                this.visibleOptions().forEach((o) => {
+                    const v = this.selectedValue(o);
+                    if (!v) return;
+                    switch (v.action) {
+                        case 'material':
+                            look.parts.push({target: v.target, material: v.materialId, color: v.color || null});
+                            break;
+                        case 'color':
+                            look.parts.push({target: v.target, color: v.color});
+                            break;
+                        case 'props':
+                            look.parts.push({target: v.target, props: this.parseProps(v.param)});
+                            break;
+                        case 'stretch':
+                            look.widthCm = parseFloat(v.param) || null;
+                            break;
+                        case 'model':
+                            look.model = v.param || null;
+                            break;
+                        case 'visibility':
+                            look.visibility.push({target: v.target});
+                            break;
+                        case 'repeat':
+                            look.repeat = {target: v.target, count: parseInt(v.param, 10) || 1};
+                            break;
+                        case 'compose':
+                            look.compose = look.compose || [];
+                            if (v.target) look.compose.push({target: v.target, mirror: isMirror(v), step: this.stepOf(o.id)?.id ?? o.id});
+                            break;
+                    }
+                });
+                return look;
+            },
+
+            parseProps(param) {
+                const props = {};
+                String(param || '').split(/[,;]+/).forEach((pair) => {
+                    const [k, val] = pair.split(':').map((s) => s && s.trim());
+                    if (k && val !== undefined && !isNaN(parseFloat(val))) props[k] = parseFloat(val);
+                });
+                return props;
+            },
+
+            async bootViewer() {
+                if (viewer) return;
+                try {
+                    const mod = await import(config.viewerUrl);
+                    viewer = new mod.ConfiguratorViewer(this.$refs.canvas, {
+                        view: config.view || 'angle',
+                        dimLayer: this.$refs.dims,
+                        hotspotLayer: this.$refs.hotspots,
+                        onProgress: (p) => { this.progress = Math.round(p * 100); },
+                        onPick: (names) => this.focusPart(names),
+                        onHover: (names) => { this.hoverStep = names ? (this.stepForPart(names) || {}).title || null : null; },
+                        onDimensions: (d) => { this.dims = d; },
+                        onAutoRotate: (on) => { this.autoRotate = on; },
+                    });
+                    window.igConfiguratorViewer = viewer;
+                    viewer.setLibrary(config.materials, config.models, config.model);
+                    const look = this.look();
+                    await viewer.apply(look, {animate: false});
+                    viewer.setAutoRotate(this.autoRotate);
+                    viewer.setHotspotsVisible(!!this.repeatOption() || !!this.sequenceStep());
+                    this.refreshThumbs(look);
+                    this.loading = false;
+                } catch (e) {
+                    console.error('Configurator viewer failed', e);
+                    viewerError = true;
+                    this.loading = false;
+                }
+            },
+
+            refresh() {
+                this.animatePrice();
+                if (!viewer) return;
+                const look = this.look();
+                const seq = ++applySeq;
+                // Element previews follow the cover once the newest look has its materials
+                viewer.apply(look).then(() => seq === applySeq && this.refreshThumbs(look));
+            },
+
+            stepForPart(names, after = null) {
+                const hits = (actions) => this.visibleOptions().filter((o) => this.availableValues(o).some((v) =>
+                    actions.includes(v.action) &&
+                    patterns(v.target).filter((p) => !p.startsWith('!')).some((p) => names.some((n) => globToRe(p).test(n)))
+                ));
+                // A composed element knows the step that chose it ("step:<id>"), so that step comes first
+                const own = names.filter((n) => String(n).startsWith('step:')).map((n) => this.stepOf(Number(String(n).slice(5))));
+                const matches = [...own, ...hits(['material', 'color', 'props']), ...hits(['visibility', 'repeat'])]
+                    .filter(Boolean)
+                    .map((o) => this.stepOf(o.id))
+                    .filter((o, i, all) => o && all.findIndex((x) => x && x.id === o.id) === i);
+                if (!matches.length) return null;
+                const i = after ? matches.findIndex((o) => o.id === after) : -1;
+                const match = matches[(i + 1) % matches.length];
+                return match ? {...match, title: this.stepTitle(match)} : null;
+            },
+
+            focusPart(names) {
+                const option = this.stepForPart(names, this.openStep);
+                if (!option) return;
+                this.openStep = option.id;
+                this.scrollToStep(option.id);
+            },
+
+            /* ---------- steppers and repeated modules ---------- */
+
+            canStep(option, dir) {
+                const values = this.availableValues(option);
+                const i = values.findIndex((v) => v.id === this.selected[option.id]);
+                return i + dir >= 0 && i + dir < values.length;
+            },
+
+            stepOption(option, dir) {
+                const values = this.availableValues(option);
+                const i = values.findIndex((v) => v.id === this.selected[option.id]);
+                const next = values[i + dir];
+                if (next) this.select(option, next);
+                return next;
+            },
+
+            repeatOption() {
+                return this.visibleOptions().find((o) => o.values.some((v) => v.action === 'repeat')) || null;
+            },
+
+            canRepeat(dir) {
+                const option = this.repeatOption();
+                return !!option && this.canStep(option, dir);
+            },
+
+            /** The + buttons on the piece: one more repeated seat, or the first element into the next free slot */
+            canAddModule() {
+                if (this.repeatOption()) return this.canRepeat(1);
+                const step = this.sequenceStep();
+                return !!step && !!this.nextSlot(step);
+            },
+
+            addModule() {
+                if (this.repeatOption()) return this.stepRepeat(1);
+                const step = this.sequenceStep();
+                const value = step && this.addableValues(step)[0];
+                if (value) this.addElement(step, value);
+            },
+
+            stepRepeat(dir) {
+                const option = this.repeatOption();
+                if (!option) return;
+                const next = this.stepOption(option, dir);
+                if (next) {
+                    this.openStep = option.id;
+                    this.notify(`${next.title} · ${this.money(this.total())}`);
+                }
+            },
+
+            setView(id) {
+                this.activeView = id;
+                if (viewer) viewer.setView(id);
+            },
+
+            toggleDims() {
+                this.showDims = !this.showDims;
+                if (viewer) viewer.setDimensionsVisible(this.showDims);
+            },
+
+            toggleRotate() {
+                this.autoRotate = !this.autoRotate;
+                if (viewer) viewer.setAutoRotate(this.autoRotate);
+            },
+
+            cycleBackground() {
+                const keys = Object.keys(backgrounds);
+                this.background = keys[(keys.indexOf(this.background) + 1) % keys.length];
+            },
+
+            toggleFullscreen() {
+                const stage = this.$refs.stage;
+                if (document.fullscreenElement) document.exitFullscreen();
+                else if (stage.requestFullscreen) stage.requestFullscreen();
+            },
+
+            downloadImage() {
+                if (!viewer) return;
+                viewer.snapshot(backgrounds[this.background]).toBlob((blob) => {
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = this.code() + '.png';
+                    a.click();
+                    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+                }, 'image/png');
+            },
+
+            /* ---------- sharing ---------- */
+
+            sharedSelection() {
+                const preset = {};
+                const param = new URLSearchParams(location.search).get('cfg');
+                (param ? param.split('.') : []).forEach((sku) => {
+                    const hit = valueBySku[decodeURIComponent(sku)];
+                    if (hit) preset[hit.option.id] = hit.value.id;
+                });
+                return preset;
+            },
+
+            shareUrl() {
+                const skus = this.visibleOptions().map((o) => this.selectedValue(o)).filter((v) => v && v.sku).map((v) => encodeURIComponent(v.sku));
+                return location.origin + location.pathname + '?cfg=' + skus.join('.');
+            },
+
+            async copyLink() {
+                const url = this.shareUrl();
+                history.replaceState(null, '', url);
+                try {
+                    await navigator.clipboard.writeText(url);
+                    this.notify('<?= $escaper->escapeJs(__('Link copied. Anyone with it sees this exact configuration.')) ?>');
+                } catch (e) {
+                    this.notify(url);
+                }
+            },
+
+            /* ---------- cart ---------- */
+
+            async addToCart() {
+                if (this.adding) return;
+                this.adding = true;
+                const body = new URLSearchParams();
+                body.append('form_key', hyva.getFormKey());
+                body.append('product', config.product.id);
+                body.append('qty', this.qty);
+                Object.entries(this.selected).forEach(([optionId, valueId]) => body.append(`options[${optionId}]`, valueId));
+                try {
+                    const response = await fetch(config.urls.add, {
+                        method: 'POST',
+                        body,
+                        headers: {'X-Requested-With': 'XMLHttpRequest'},
+                    });
+                    const result = await response.json();
+                    if (!result.success) throw new Error(result.message);
+                    this.storeThumb(result.itemId);
+                    this.drawer = true;
+                    await this.refreshCart();
+                    this.notify(result.message);
+                } catch (e) {
+                    this.notify(e.message || '<?= $escaper->escapeJs(__('Something went wrong. Please try again.')) ?>');
+                } finally {
+                    this.adding = false;
+                }
+            },
+
+            async removeItem(itemId) {
+                const body = new URLSearchParams();
+                body.append('form_key', hyva.getFormKey());
+                body.append('item_id', itemId);
+                this.cart.items = this.cart.items.filter((i) => i.item_id !== itemId);
+                await fetch(config.urls.remove, {method: 'POST', body, headers: {'X-Requested-With': 'XMLHttpRequest'}});
+                await this.refreshCart();
+            },
+
+            /** Load the cart section straight away, then let Hyvä refresh its cache (header count etc.) */
+            async refreshCart() {
+                try {
+                    const response = await fetch(BASE_URL + 'customer/section/load/?sections=cart&force_new_section_timestamp=true', {
+                        headers: {'X-Requested-With': 'XMLHttpRequest'},
+                    });
+                    this.onSections(await response.json());
+                } catch (e) { /* the drawer keeps its last state */ }
+                window.dispatchEvent(new CustomEvent('reload-customer-section-data'));
+            },
+
+            onSections(data) {
+                const cart = (data && data.cart) || {};
+                this.cart = {
+                    items: cart.items || [],
+                    count: cart.summary_count || 0,
+                    subtotal: cart.subtotal || '',
+                };
+            },
+
+            storeThumb(itemId) {
+                if (!viewer || !itemId) return;
+                try {
+                    const url = viewer.snapshot(backgrounds[this.background], 360, true).toDataURL('image/jpeg', 0.82);
+                    sessionStorage.setItem('ig-thumb-' + itemId, url);
+                } catch (e) { /* storage full or unavailable: fall back to the product image */ }
+            },
+
+            thumbFor(item) {
+                try {
+                    const stored = sessionStorage.getItem('ig-thumb-' + item.item_id);
+                    if (stored) return stored;
+                } catch (e) { /* ignore */ }
+                return item.product_image ? item.product_image.src : '';
+            },
+
+            /* ---------- quote request ---------- */
+
+            dimsLabel() {
+                return this.dims ? `${this.dims.width} × ${this.dims.depth} × ${this.dims.height} cm` : '';
+            },
+
+            openQuote() {
+                this.quoteError = '';
+                if (this.quoteDone) this.quoteDone = null;
+                try {
+                    this.quoteThumb = viewer ? viewer.snapshot(backgrounds[this.background], 1200, true).toDataURL('image/jpeg', 0.84) : '';
+                } catch (e) {
+                    this.quoteThumb = '';
+                }
+                this.quoteOpen = true;
+            },
+
+            async submitQuote() {
+                if (this.quoteSending) return;
+                const q = this.quote;
+                if (!q.name.trim()) return this.quoteError = '<?= $escaper->escapeJs(__('Please enter your name.')) ?>';
+                if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(q.email.trim())) return this.quoteError = '<?= $escaper->escapeJs(__('Please enter a valid email address.')) ?>';
+                if (q.contact_preference !== 'email' && !q.phone.trim()) return this.quoteError = '<?= $escaper->escapeJs(__('Please add a phone number so we can call you back.')) ?>';
+                if (!q.consent) return this.quoteError = '<?= $escaper->escapeJs(__('Please agree to be contacted about this request.')) ?>';
+                this.quoteError = '';
+                this.quoteSending = true;
+                const body = new URLSearchParams();
+                body.append('form_key', hyva.getFormKey());
+                body.append('product', config.product.id);
+                body.append('qty', this.qty);
+                Object.entries(this.selected).forEach(([optionId, valueId]) => body.append(`options[${optionId}]`, valueId));
+                Object.entries(q).forEach(([key, value]) => body.append(key, key === 'consent' ? (value ? '1' : '') : value));
+                body.append('dimensions', this.dimsLabel());
+                body.append('share_url', this.shareUrl());
+                if (this.quoteThumb) body.append('snapshot', this.quoteThumb);
+                try {
+                    const response = await fetch(config.urls.quote, {
+                        method: 'POST',
+                        body,
+                        headers: {'X-Requested-With': 'XMLHttpRequest'},
+                    });
+                    const result = await response.json();
+                    if (!result.success) throw new Error(result.message);
+                    this.quoteDone = result.reference || '—';
+                    this.quote.message = '';
+                } catch (e) {
+                    this.quoteError = e.message || '<?= $escaper->escapeJs(__('We could not send your request. Please try again.')) ?>';
+                } finally {
+                    this.quoteSending = false;
+                }
+            },
+
+            notify(text) {
+                this.toast = {text};
+                clearTimeout(this.toastTimer);
+                this.toastTimer = setTimeout(() => { this.toast = null; }, 3600);
+            },
+        };
+    }
+</script>

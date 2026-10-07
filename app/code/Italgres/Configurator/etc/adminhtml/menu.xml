@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Italgres_Configurator::configurator" title="3D Configurator" translate="title" module="Italgres_Configurator"
+             sortOrder="40" parent="Magento_Catalog::catalog" resource="Italgres_Configurator::configurator"/>
+        <add id="Italgres_Configurator::materials" title="Materials Library" translate="title" module="Italgres_Configurator"
+             sortOrder="10" parent="Italgres_Configurator::configurator" action="italgres_cfg/material/index"
+             resource="Italgres_Configurator::materials"/>
+        <add id="Italgres_Configurator::models" title="3D Models" translate="title" module="Italgres_Configurator"
+             sortOrder="20" parent="Italgres_Configurator::configurator" action="italgres_cfg/model/index"
+             resource="Italgres_Configurator::models"/>
+        <add id="Italgres_Configurator::quotes" title="Quote Requests" translate="title" module="Italgres_Configurator"
+             sortOrder="15" parent="Magento_Sales::sales_operation" action="italgres_cfg/quote/index"
+             resource="Italgres_Configurator::quotes"/>
+    </menu>
+</config>

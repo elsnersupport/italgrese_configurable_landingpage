@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <italgres_demo>
+            <general>
+                <lock_enabled>1</lock_enabled>
+                <landing_sku>AURELIA-SOFA</landing_sku>
+                <allowed_actions/>
+                <brand_name>Italgres</brand_name>
+                <badge>Configurator Preview</badge>
+                <show_nav>1</show_nav>
+            </general>
+        </italgres_demo>
+    </default>
+</config>

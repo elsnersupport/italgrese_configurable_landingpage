@@ -1,0 +1,297 @@
+<?xml version="1.0"?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">italgres_cfg_material_form.italgres_cfg_material_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">Material</item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+    </argument>
+    <settings>
+        <buttons>
+            <button name="back" class="Italgres\Configurator\Block\Adminhtml\Edit\BackButton"/>
+            <button name="delete" class="Italgres\Configurator\Block\Adminhtml\Edit\DeleteButton"/>
+            <button name="save_and_continue" class="Italgres\Configurator\Block\Adminhtml\Edit\SaveAndContinueButton"/>
+            <button name="save" class="Italgres\Configurator\Block\Adminhtml\Edit\SaveButton"/>
+        </buttons>
+        <namespace>italgres_cfg_material_form</namespace>
+        <dataScope>data</dataScope>
+        <deps>
+            <dep>italgres_cfg_material_form.italgres_cfg_material_form_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="italgres_cfg_material_form_data_source">
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+        <settings>
+            <submitUrl path="*/*/save"/>
+        </settings>
+        <dataProvider class="Italgres\Configurator\Ui\DataProvider\MaterialFormDataProvider" name="italgres_cfg_material_form_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>material_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <fieldset name="general" sortOrder="10">
+        <settings>
+            <label translate="true">Material</label>
+        </settings>
+        <field name="material_id" formElement="input" sortOrder="10">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">ID</label>
+                <visible>false</visible>
+            </settings>
+        </field>
+        <field name="name" formElement="input" sortOrder="10">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Name</label>
+                <notice translate="true">Shown to customers, e.g. "Velvet" or "Calacatta Oro".</notice>
+            </settings>
+        </field>
+        <field name="code" formElement="input" sortOrder="20">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Code</label>
+                <notice translate="true">Unique key (letters, numbers, dashes).</notice>
+            </settings>
+        </field>
+        <field name="family" formElement="select" sortOrder="30">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Family</label>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="Italgres\Configurator\Model\Source\Family"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+        <field name="is_active" formElement="checkbox" sortOrder="40">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="default" xsi:type="number">1</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>boolean</dataType>
+                <label translate="true">Active</label>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <valueMap>
+                            <map name="false" xsi:type="number">0</map>
+                            <map name="true" xsi:type="number">1</map>
+                        </valueMap>
+                        <prefer>toggle</prefer>
+                    </settings>
+                </checkbox>
+            </formElements>
+        </field>
+        <field name="sort_order" formElement="input" sortOrder="50">
+            <settings>
+                <validation>
+                    <rule name="validate-number" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Sort Order</label>
+            </settings>
+        </field>
+        <field name="description" formElement="textarea" sortOrder="60">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Description</label>
+                <notice translate="true">Optional, shown in the configurator as a hint.</notice>
+            </settings>
+        </field>
+    </fieldset>
+    <fieldset name="textures" sortOrder="20">
+        <settings>
+            <label translate="true">Textures</label>
+            <collapsible>true</collapsible>
+            <opened>true</opened>
+        </settings>
+        <field name="swatch" formElement="fileUploader" sortOrder="10">
+            <settings>
+                <label translate="true">Swatch Image</label>
+                <notice translate="true">Square image shown on the option tile. Falls back to the colour.</notice>
+                <componentType>fileUploader</componentType>
+            </settings>
+            <formElements>
+                <fileUploader>
+                    <settings>
+                        <allowedExtensions>jpg jpeg png webp</allowedExtensions>
+                        <maxFileSize>10485760</maxFileSize>
+                        <previewTmpl>Magento_Catalog/image-preview</previewTmpl>
+                        <uploaderConfig>
+                            <param xsi:type="url" name="url" path="italgres_cfg/material/upload"/>
+                        </uploaderConfig>
+                    </settings>
+                </fileUploader>
+            </formElements>
+        </field>
+        <field name="map" formElement="fileUploader" sortOrder="20">
+            <settings>
+                <label translate="true">Colour (Albedo) Map</label>
+                <notice translate="true">For tintable fabrics use a neutral light-grey map; option values then tint it.</notice>
+                <componentType>fileUploader</componentType>
+            </settings>
+            <formElements>
+                <fileUploader>
+                    <settings>
+                        <allowedExtensions>jpg jpeg png webp</allowedExtensions>
+                        <maxFileSize>10485760</maxFileSize>
+                        <previewTmpl>Magento_Catalog/image-preview</previewTmpl>
+                        <uploaderConfig>
+                            <param xsi:type="url" name="url" path="italgres_cfg/material/upload"/>
+                        </uploaderConfig>
+                    </settings>
+                </fileUploader>
+            </formElements>
+        </field>
+        <field name="normal_map" formElement="fileUploader" sortOrder="30">
+            <settings>
+                <label translate="true">Normal Map</label>
+                <notice translate="true">OpenGL convention (green up).</notice>
+                <componentType>fileUploader</componentType>
+            </settings>
+            <formElements>
+                <fileUploader>
+                    <settings>
+                        <allowedExtensions>jpg jpeg png webp</allowedExtensions>
+                        <maxFileSize>10485760</maxFileSize>
+                        <previewTmpl>Magento_Catalog/image-preview</previewTmpl>
+                        <uploaderConfig>
+                            <param xsi:type="url" name="url" path="italgres_cfg/material/upload"/>
+                        </uploaderConfig>
+                    </settings>
+                </fileUploader>
+            </formElements>
+        </field>
+        <field name="roughness_map" formElement="fileUploader" sortOrder="40">
+            <settings>
+                <label translate="true">Roughness Map</label>
+                <componentType>fileUploader</componentType>
+            </settings>
+            <formElements>
+                <fileUploader>
+                    <settings>
+                        <allowedExtensions>jpg jpeg png webp</allowedExtensions>
+                        <maxFileSize>10485760</maxFileSize>
+                        <previewTmpl>Magento_Catalog/image-preview</previewTmpl>
+                        <uploaderConfig>
+                            <param xsi:type="url" name="url" path="italgres_cfg/material/upload"/>
+                        </uploaderConfig>
+                    </settings>
+                </fileUploader>
+            </formElements>
+        </field>
+        <field name="repeat_scale" formElement="input" sortOrder="50">
+            <settings>
+                <validation>
+                    <rule name="validate-number" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Texture Repeat</label>
+                <notice translate="true">How many times the texture repeats per UV unit of the model. Each 3D model can scale this further.</notice>
+            </settings>
+        </field>
+        <field name="normal_scale" formElement="input" sortOrder="60">
+            <settings>
+                <validation>
+                    <rule name="validate-number" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Normal Strength</label>
+            </settings>
+        </field>
+    </fieldset>
+    <fieldset name="surface" sortOrder="30">
+        <settings>
+            <label translate="true">Surface</label>
+            <collapsible>true</collapsible>
+            <opened>true</opened>
+        </settings>
+        <field name="color" formElement="colorPicker" sortOrder="10">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Base Colour</label>
+                <notice translate="true">Multiplies the albedo map. Option values can tint it again.</notice>
+            </settings>
+            <formElements>
+                <colorPicker>
+                    <settings>
+                        <colorPickerMode>full</colorPickerMode>
+                        <colorFormat>hex</colorFormat>
+                    </settings>
+                </colorPicker>
+            </formElements>
+        </field>
+        <field name="roughness" formElement="input" sortOrder="20">
+            <settings>
+                <validation>
+                    <rule name="validate-number" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Roughness (0 = mirror, 1 = matte)</label>
+            </settings>
+        </field>
+        <field name="metalness" formElement="input" sortOrder="30">
+            <settings>
+                <validation>
+                    <rule name="validate-number" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Metalness (0-1)</label>
+            </settings>
+        </field>
+        <field name="sheen" formElement="input" sortOrder="40">
+            <settings>
+                <validation>
+                    <rule name="validate-number" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Fabric Sheen (0-1)</label>
+                <notice translate="true">Velvet and bouclé look: 0.6 - 1.</notice>
+            </settings>
+        </field>
+        <field name="sheen_color" formElement="colorPicker" sortOrder="50">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Sheen Colour</label>
+            </settings>
+            <formElements>
+                <colorPicker>
+                    <settings>
+                        <colorPickerMode>full</colorPickerMode>
+                        <colorFormat>hex</colorFormat>
+                    </settings>
+                </colorPicker>
+            </formElements>
+        </field>
+        <field name="clearcoat" formElement="input" sortOrder="60">
+            <settings>
+                <validation>
+                    <rule name="validate-number" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Clearcoat / Polish (0-1)</label>
+                <notice translate="true">Polished porcelain or lacquer: 0.6 - 1.</notice>
+            </settings>
+        </field>
+    </fieldset>
+</form>

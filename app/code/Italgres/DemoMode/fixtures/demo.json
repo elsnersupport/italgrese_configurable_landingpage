@@ -1,0 +1,1443 @@
+{
+    "materials": [
+        {
+            "code": "velvet",
+            "name": "Italian Velvet",
+            "family": "fabric",
+            "color": "#b4b4b4",
+            "map": "textures/velvet_albedo.jpg",
+            "normal_map": "textures/velvet_normal.jpg",
+            "roughness_map": "textures/velvet_rough.jpg",
+            "swatch": "swatches/velvet.jpg",
+            "repeat_scale": 6,
+            "roughness": 0.9,
+            "sheen": 1,
+            "normal_scale": 0.6,
+            "description": "Dense cotton velvet with a soft, light-catching pile."
+        },
+        {
+            "code": "boucle",
+            "name": "Bouclé",
+            "family": "fabric",
+            "color": "#ffffff",
+            "map": "textures/boucle_albedo.jpg",
+            "normal_map": "textures/boucle_normal.jpg",
+            "roughness_map": "textures/boucle_rough.jpg",
+            "swatch": "swatches/boucle.jpg",
+            "repeat_scale": 5,
+            "roughness": 0.95,
+            "sheen": 0.55,
+            "normal_scale": 1.2,
+            "description": "Looped wool bouclé with a tactile, nubby surface."
+        },
+        {
+            "code": "linen",
+            "name": "Washed Linen",
+            "family": "fabric",
+            "color": "#e8e8e8",
+            "map": "textures/linen_albedo.jpg",
+            "normal_map": "textures/linen_normal.jpg",
+            "roughness_map": "textures/linen_rough.jpg",
+            "swatch": "swatches/linen.jpg",
+            "repeat_scale": 7,
+            "roughness": 0.92,
+            "sheen": 0.25,
+            "normal_scale": 0.8,
+            "description": "Stone-washed Belgian linen, relaxed and breathable."
+        },
+        {
+            "code": "herringbone",
+            "name": "Wool Herringbone",
+            "family": "fabric",
+            "color": "#d6d6d6",
+            "map": "textures/herringbone_albedo.jpg",
+            "normal_map": "textures/herringbone_normal.jpg",
+            "roughness_map": "textures/herringbone_rough.jpg",
+            "swatch": "swatches/herringbone.jpg",
+            "repeat_scale": 6,
+            "roughness": 0.9,
+            "sheen": 0.35,
+            "normal_scale": 0.8,
+            "description": "Tailoring-grade wool woven in a fine herringbone."
+        },
+        {
+            "code": "leather",
+            "name": "Aniline Leather",
+            "family": "leather",
+            "color": "#ffffff",
+            "map": "textures/leather_albedo.jpg",
+            "normal_map": "textures/leather_normal.jpg",
+            "roughness_map": "textures/leather_rough.jpg",
+            "swatch": "swatches/leather.jpg",
+            "repeat_scale": 4,
+            "roughness": 0.5,
+            "sheen": 0,
+            "clearcoat": 0.15,
+            "normal_scale": 0.7,
+            "description": "Full-grain aniline leather that develops a patina."
+        },
+        {
+            "code": "walnut",
+            "name": "Canaletto Walnut",
+            "family": "wood",
+            "color": "#ffffff",
+            "map": "textures/walnut_albedo.jpg",
+            "normal_map": "textures/walnut_normal.jpg",
+            "roughness_map": "textures/walnut_rough.jpg",
+            "swatch": "swatches/walnut.jpg",
+            "repeat_scale": 2,
+            "roughness": 0.55,
+            "clearcoat": 0.25,
+            "normal_scale": 0.5,
+            "description": "Italian Canaletto walnut with an oiled satin finish."
+        },
+        {
+            "code": "oak",
+            "name": "Natural Oak",
+            "family": "wood",
+            "color": "#ffffff",
+            "map": "textures/oak_albedo.jpg",
+            "normal_map": "textures/oak_normal.jpg",
+            "roughness_map": "textures/oak_rough.jpg",
+            "swatch": "swatches/oak.jpg",
+            "repeat_scale": 2,
+            "roughness": 0.6,
+            "normal_scale": 0.5,
+            "description": "European oak, brushed and matt lacquered."
+        },
+        {
+            "code": "ash",
+            "name": "White Ash",
+            "family": "wood",
+            "color": "#ffffff",
+            "map": "textures/ash_albedo.jpg",
+            "normal_map": "textures/ash_normal.jpg",
+            "roughness_map": "textures/ash_rough.jpg",
+            "swatch": "swatches/ash.jpg",
+            "repeat_scale": 2,
+            "roughness": 0.6,
+            "normal_scale": 0.5,
+            "description": "Pale ash with a fine, straight grain."
+        },
+        {
+            "code": "ebony",
+            "name": "Ebonised Oak",
+            "family": "wood",
+            "color": "#ffffff",
+            "map": "textures/ebony_albedo.jpg",
+            "normal_map": "textures/ebony_normal.jpg",
+            "roughness_map": "textures/ebony_rough.jpg",
+            "swatch": "swatches/ebony.jpg",
+            "repeat_scale": 2,
+            "roughness": 0.45,
+            "clearcoat": 0.35,
+            "normal_scale": 0.5,
+            "description": "Oak stained near-black, grain still visible."
+        },
+        {
+            "code": "brass",
+            "name": "Brushed Brass",
+            "family": "metal",
+            "color": "#c9a467",
+            "roughness": 0.32,
+            "metalness": 1,
+            "description": "Solid brass, hand-brushed."
+        },
+        {
+            "code": "champagne",
+            "name": "Champagne Gold",
+            "family": "metal",
+            "color": "#dcc7a3",
+            "roughness": 0.25,
+            "metalness": 1
+        },
+        {
+            "code": "bronze",
+            "name": "Burnished Bronze",
+            "family": "metal",
+            "color": "#7b5536",
+            "roughness": 0.38,
+            "metalness": 1
+        },
+        {
+            "code": "chrome",
+            "name": "Polished Chrome",
+            "family": "metal",
+            "color": "#eceef0",
+            "roughness": 0.06,
+            "metalness": 1
+        },
+        {
+            "code": "black-steel",
+            "name": "Matte Black Steel",
+            "family": "metal",
+            "color": "#1d1d1d",
+            "roughness": 0.55,
+            "metalness": 0.7
+        },
+        {
+            "code": "calacatta-oro",
+            "name": "Calacatta Oro",
+            "family": "porcelain",
+            "color": "#ffffff",
+            "map": "textures/calacatta_oro_albedo.jpg",
+            "swatch": "swatches/calacatta_oro.jpg",
+            "repeat_scale": 1,
+            "roughness": 0.12,
+            "clearcoat": 1,
+            "description": "Warm white porcelain slab with bold gold veining."
+        },
+        {
+            "code": "statuario",
+            "name": "Statuario",
+            "family": "porcelain",
+            "color": "#ffffff",
+            "map": "textures/statuario_albedo.jpg",
+            "swatch": "swatches/statuario.jpg",
+            "repeat_scale": 1,
+            "roughness": 0.12,
+            "clearcoat": 1,
+            "description": "Crisp white porcelain with dramatic grey veins."
+        },
+        {
+            "code": "nero-marquina",
+            "name": "Nero Marquina",
+            "family": "porcelain",
+            "color": "#ffffff",
+            "map": "textures/nero_marquina_albedo.jpg",
+            "swatch": "swatches/nero_marquina.jpg",
+            "repeat_scale": 1,
+            "roughness": 0.1,
+            "clearcoat": 1,
+            "description": "Deep black porcelain with fine white veins."
+        },
+        {
+            "code": "pietra-grey",
+            "name": "Pietra Grey",
+            "family": "porcelain",
+            "color": "#ffffff",
+            "map": "textures/pietra_grey_albedo.jpg",
+            "swatch": "swatches/pietra_grey.jpg",
+            "repeat_scale": 1,
+            "roughness": 0.14,
+            "clearcoat": 1,
+            "description": "Soft grey porcelain with a light white web."
+        },
+        {
+            "code": "crema-marfil",
+            "name": "Crema Marfil",
+            "family": "porcelain",
+            "color": "#ffffff",
+            "map": "textures/crema_marfil_albedo.jpg",
+            "swatch": "swatches/crema_marfil.jpg",
+            "repeat_scale": 1,
+            "roughness": 0.14,
+            "clearcoat": 1,
+            "description": "Warm ivory porcelain with quiet beige veins."
+        },
+        {
+            "code": "mida",
+            "name": "Mida",
+            "family": "fabric",
+            "color": "#ffffff",
+            "map": "textures/linen_albedo.jpg",
+            "normal_map": "textures/linen_normal.jpg",
+            "roughness_map": "textures/linen_rough.jpg",
+            "swatch": "swatches/linen.jpg",
+            "repeat_scale": 6,
+            "roughness": 0.93,
+            "sheen": 0.3,
+            "normal_scale": 0.9,
+            "description": "Textured woven upholstery fabric with a soft natural slub."
+        },
+        {
+            "code": "chic-boucle",
+            "name": "Chic Bouclé",
+            "family": "fabric",
+            "color": "#ffffff",
+            "map": "textures/boucle_albedo.jpg",
+            "normal_map": "textures/boucle_normal.jpg",
+            "roughness_map": "textures/boucle_rough.jpg",
+            "swatch": "swatches/boucle.jpg",
+            "repeat_scale": 5,
+            "roughness": 0.95,
+            "sheen": 0.55,
+            "normal_scale": 1.2,
+            "description": "Looped bouclé with a tactile, nubby surface."
+        },
+        {
+            "code": "soft-velvet",
+            "name": "Soft Velvet",
+            "family": "fabric",
+            "color": "#c8c8c8",
+            "map": "textures/velvet_albedo.jpg",
+            "normal_map": "textures/velvet_normal.jpg",
+            "roughness_map": "textures/velvet_rough.jpg",
+            "swatch": "swatches/velvet.jpg",
+            "repeat_scale": 6,
+            "roughness": 0.9,
+            "sheen": 1,
+            "normal_scale": 0.6,
+            "description": "Short-pile velvet that catches the light."
+        },
+        {
+            "code": "rough-leather",
+            "name": "Rough Leather",
+            "family": "leather",
+            "color": "#ffffff",
+            "map": "textures/leather_albedo.jpg",
+            "normal_map": "textures/leather_normal.jpg",
+            "roughness_map": "textures/leather_rough.jpg",
+            "swatch": "swatches/leather.jpg",
+            "repeat_scale": 4,
+            "roughness": 0.66,
+            "sheen": 0,
+            "clearcoat": 0.04,
+            "normal_scale": 0.9,
+            "description": "Waxed, lightly corrected leather with a matt, rugged grain."
+        }
+    ],
+    "models": [
+        {
+            "code": "aurelia-sofa",
+            "name": "Aurelia Sofa",
+            "file": "models/GlamVelvetSofa.glb",
+            "base_width_cm": 220,
+            "stretch_zone": 0.78,
+            "rigid_parts": "*legs*, *feet*",
+            "uv_scale": 1,
+            "rotation_y": 0,
+            "credits": "3D model “Glam Velvet Sofa” © 2021 Wayfair LLC, CC BY 4.0, via Khronos glTF Sample Assets."
+        },
+        {
+            "code": "nora-chair",
+            "name": "Nora Lounge Chair",
+            "file": "models/SheenChair.glb",
+            "base_width_cm": 83,
+            "stretch_zone": 0.7,
+            "rigid_parts": "",
+            "uv_scale": 1,
+            "rotation_y": 0,
+            "credits": "3D model “Sheen Chair” © 2021 Wayfair LLC, CC BY 4.0, via Khronos glTF Sample Assets."
+        },
+        {
+            "code": "fiora-table",
+            "name": "Fiora Coffee Table",
+            "file": "models/FioraTable.glb",
+            "base_width_cm": 90,
+            "stretch_zone": 0.7,
+            "rigid_parts": "Base*",
+            "uv_scale": 1,
+            "rotation_y": 0,
+            "credits": ""
+        },
+        {
+            "code": "lucca-modular",
+            "name": "Lucca Sectional Sofa",
+            "file": "models/ModularSofa.glb",
+            "base_width_cm": 0,
+            "stretch_zone": 0.7,
+            "rigid_parts": "",
+            "uv_scale": 1,
+            "rotation_y": 0,
+            "credits": ""
+        }
+    ],
+    "products": [
+        {
+            "sku": "AURELIA-SOFA",
+            "name": "Aurelia Velvet Sofa",
+            "url_key": "aurelia-velvet-sofa",
+            "price": 3290,
+            "weight": 85,
+            "model": "aurelia-sofa",
+            "scene": "studio",
+            "tagline": "A sculpted sofa with a softly rounded back, sized and dressed to order.",
+            "lead_time": "Made to order in our atelier · delivered in 6–8 weeks",
+            "description": "<p>Aurelia pairs a low, generous seat with a back that curves into the arms in one continuous line. The kiln-dried hardwood frame is upholstered by hand, then set on slim tapered legs finished with metal ferrules.</p><p>Choose its length, cover and finishes here: every change is shown in 3D, priced instantly and saved as a configuration code your designer can reuse.</p>",
+            "features": [
+                "Sculpted by hand | Hardwood frame, webbed seat and hand-tied upholstery built by our atelier.",
+                "Sized to your room | From a compact two-seater to a generous four-seater; the arms keep their proportions.",
+                "Covers that last | Performance velvets and bouclés tested beyond 50,000 rubs, leathers that age gracefully."
+            ],
+            "options": [
+                {
+                    "title": "Size",
+                    "display": "pill",
+                    "values": [
+                        {
+                            "title": "2-Seater · 190 cm",
+                            "sku": "2S",
+                            "price": -450,
+                            "action": "stretch",
+                            "param": "190"
+                        },
+                        {
+                            "title": "3-Seater · 220 cm",
+                            "sku": "3S",
+                            "price": 0,
+                            "action": "stretch",
+                            "param": "220"
+                        },
+                        {
+                            "title": "4-Seater · 250 cm",
+                            "sku": "4S",
+                            "price": 590,
+                            "action": "stretch",
+                            "param": "250"
+                        }
+                    ]
+                },
+                {
+                    "title": "Upholstery",
+                    "display": "tile",
+                    "note": "Every cover is cut and sewn to order.",
+                    "values": [
+                        {
+                            "title": "Italian Velvet",
+                            "sku": "VEL",
+                            "price": 0,
+                            "action": "material",
+                            "material": "velvet",
+                            "target": "*fabric*"
+                        },
+                        {
+                            "title": "Bouclé",
+                            "sku": "BOU",
+                            "price": 390,
+                            "action": "material",
+                            "material": "boucle",
+                            "target": "*fabric*"
+                        },
+                        {
+                            "title": "Washed Linen",
+                            "sku": "LIN",
+                            "price": -120,
+                            "action": "material",
+                            "material": "linen",
+                            "target": "*fabric*"
+                        },
+                        {
+                            "title": "Aniline Leather",
+                            "sku": "LEA",
+                            "price": 1150,
+                            "action": "material",
+                            "material": "leather",
+                            "target": "*fabric*"
+                        }
+                    ]
+                },
+                {
+                    "title": "Colour",
+                    "display": "swatch",
+                    "note": "Colours change with the upholstery you choose.",
+                    "values": [
+                        {
+                            "title": "Emerald",
+                            "sku": "EMR",
+                            "color": "#1f5d47",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "VEL"
+                        },
+                        {
+                            "title": "Midnight",
+                            "sku": "MDN",
+                            "color": "#232e4a",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "VEL"
+                        },
+                        {
+                            "title": "Blush",
+                            "sku": "BLS",
+                            "color": "#dcaaa3",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "VEL"
+                        },
+                        {
+                            "title": "Ochre",
+                            "sku": "OCH",
+                            "color": "#c48d2e",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "VEL"
+                        },
+                        {
+                            "title": "Terracotta",
+                            "sku": "TER",
+                            "color": "#a9573b",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "VEL"
+                        },
+                        {
+                            "title": "Champagne",
+                            "sku": "CHM",
+                            "color": "#d3c3a5",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "VEL"
+                        },
+                        {
+                            "title": "Charcoal",
+                            "sku": "CHC",
+                            "color": "#3c3c3f",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "VEL"
+                        },
+                        {
+                            "title": "Ivory",
+                            "sku": "IVO",
+                            "color": "#f2ece1",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "BOU"
+                        },
+                        {
+                            "title": "Oat",
+                            "sku": "OAT",
+                            "color": "#dccdb4",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "BOU"
+                        },
+                        {
+                            "title": "Pebble",
+                            "sku": "PEB",
+                            "color": "#aca59a",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "BOU"
+                        },
+                        {
+                            "title": "Mocha",
+                            "sku": "MOC",
+                            "color": "#735a48",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "BOU"
+                        },
+                        {
+                            "title": "Natural",
+                            "sku": "NAT",
+                            "color": "#ddd3c3",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "LIN"
+                        },
+                        {
+                            "title": "Sage",
+                            "sku": "SAG",
+                            "color": "#a3ad93",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "LIN"
+                        },
+                        {
+                            "title": "Slate",
+                            "sku": "SLT",
+                            "color": "#737c85",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "LIN"
+                        },
+                        {
+                            "title": "Sand",
+                            "sku": "SND",
+                            "color": "#d1bd9e",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "LIN"
+                        },
+                        {
+                            "title": "Cognac",
+                            "sku": "COG",
+                            "color": "#8d4d25",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "LEA"
+                        },
+                        {
+                            "title": "Tan",
+                            "sku": "TAN",
+                            "color": "#b47d4c",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "LEA"
+                        },
+                        {
+                            "title": "Espresso",
+                            "sku": "ESP",
+                            "color": "#3e2c23",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "LEA"
+                        },
+                        {
+                            "title": "Nero",
+                            "sku": "NER",
+                            "color": "#1d1c1b",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "LEA"
+                        },
+                        {
+                            "title": "Oxblood",
+                            "sku": "OXB",
+                            "color": "#5e2121",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "LEA",
+                            "price": 90
+                        }
+                    ]
+                },
+                {
+                    "title": "Legs",
+                    "display": "tile",
+                    "values": [
+                        {
+                            "title": "Ebonised Oak",
+                            "sku": "EBO",
+                            "price": 0,
+                            "action": "material",
+                            "material": "ebony",
+                            "target": "GlamVelvetSofa_legs"
+                        },
+                        {
+                            "title": "Canaletto Walnut",
+                            "sku": "WAL",
+                            "price": 120,
+                            "action": "material",
+                            "material": "walnut",
+                            "target": "GlamVelvetSofa_legs"
+                        },
+                        {
+                            "title": "Natural Oak",
+                            "sku": "OAK",
+                            "price": 90,
+                            "action": "material",
+                            "material": "oak",
+                            "target": "GlamVelvetSofa_legs"
+                        },
+                        {
+                            "title": "Matte Black Steel",
+                            "sku": "BLK",
+                            "price": 60,
+                            "action": "material",
+                            "material": "black-steel",
+                            "target": "GlamVelvetSofa_legs"
+                        }
+                    ]
+                },
+                {
+                    "title": "Ferrules",
+                    "display": "swatch",
+                    "note": "The metal caps at the foot of each leg.",
+                    "values": [
+                        {
+                            "title": "Brushed Brass",
+                            "sku": "BRS",
+                            "price": 0,
+                            "action": "material",
+                            "material": "brass",
+                            "target": "GlamVelvetSofa_feet"
+                        },
+                        {
+                            "title": "Champagne Gold",
+                            "sku": "CHG",
+                            "price": 0,
+                            "action": "material",
+                            "material": "champagne",
+                            "target": "GlamVelvetSofa_feet"
+                        },
+                        {
+                            "title": "Polished Chrome",
+                            "sku": "CHR",
+                            "price": 0,
+                            "action": "material",
+                            "material": "chrome",
+                            "target": "GlamVelvetSofa_feet"
+                        },
+                        {
+                            "title": "Burnished Bronze",
+                            "sku": "BRZ",
+                            "price": 40,
+                            "action": "material",
+                            "material": "bronze",
+                            "target": "GlamVelvetSofa_feet"
+                        }
+                    ]
+                },
+                {
+                    "title": "Seat Comfort",
+                    "display": "pill",
+                    "note": "Doesn't change the look — it's how the seat feels.",
+                    "values": [
+                        {
+                            "title": "Feather & down",
+                            "sku": "FD",
+                            "price": 0
+                        },
+                        {
+                            "title": "High-resilience foam",
+                            "sku": "HR",
+                            "price": 0
+                        },
+                        {
+                            "title": "Memory foam topper",
+                            "sku": "MF",
+                            "price": 240
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "sku": "LUCCA-MODULAR",
+            "name": "Lucca Modular Sofa",
+            "url_key": "lucca-modular-sofa",
+            "price": 2990,
+            "weight": 95,
+            "model": "lucca-modular",
+            "scene": "white",
+            "view": "front",
+            "tagline": "Compose it element by element, from a compact sofa to a long sectional with a chaise longue.",
+            "lead_time": "Made to order in our atelier · delivered in 6–8 weeks",
+            "description": "<p>Lucca is a sectional built from separate elements. Choose a left and a right end (a seat with an arm, a chaise longue or an ottoman with an open end) and add up to three 1 or 1.5-seat elements in between.</p><p>Every element has a piped two-tier back with its own headrest, a deep integrated seat cushion and slim upholstered arms with a soft armrest on top. The 3D view, price and dimensions follow each change, and the configuration code records the exact layout.</p>",
+            "features": [
+                "Composed element by element | Left end, right end and up to three successive elements, from a compact sofa to a long sectional with a chaise longue.",
+                "Tailored details | Piped seams, a separate headrest for every seat and black feet that keep the base visually light.",
+                "Four cover collections | Mida weave, Chic Bouclé, Soft Velvet and Rough Leather, each in its own palette."
+            ],
+            "options": [
+                {
+                    "title": "Sofa cover",
+                    "display": "swatch",
+                    "note": "Four collections, each cut and sewn to order.",
+                    "values": [
+                        {
+                            "title": "Mida Sand",
+                            "sku": "MSA",
+                            "price": 0,
+                            "action": "material",
+                            "material": "mida",
+                            "target": "Cover, Piping",
+                            "color": "#beb6aa"
+                        },
+                        {
+                            "title": "Mida Forest",
+                            "sku": "MFO",
+                            "price": 0,
+                            "action": "material",
+                            "material": "mida",
+                            "target": "Cover, Piping",
+                            "color": "#4a5449"
+                        },
+                        {
+                            "title": "Mida Walnut",
+                            "sku": "MWA",
+                            "price": 0,
+                            "action": "material",
+                            "material": "mida",
+                            "target": "Cover, Piping",
+                            "color": "#5a432d"
+                        },
+                        {
+                            "title": "Mida Stone",
+                            "sku": "MST",
+                            "price": 0,
+                            "action": "material",
+                            "material": "mida",
+                            "target": "Cover, Piping",
+                            "color": "#5e5f59"
+                        },
+                        {
+                            "title": "Mida Night",
+                            "sku": "MNI",
+                            "price": 0,
+                            "action": "material",
+                            "material": "mida",
+                            "target": "Cover, Piping",
+                            "color": "#2f3435"
+                        },
+                        {
+                            "title": "Bouclé Graphite",
+                            "sku": "BGR",
+                            "price": 290,
+                            "action": "material",
+                            "material": "chic-boucle",
+                            "target": "Cover, Piping",
+                            "color": "#4d4845"
+                        },
+                        {
+                            "title": "Bouclé Ivory",
+                            "sku": "BIV",
+                            "price": 290,
+                            "action": "material",
+                            "material": "chic-boucle",
+                            "target": "Cover, Piping",
+                            "color": "#e9ded0"
+                        },
+                        {
+                            "title": "Bouclé Taupe",
+                            "sku": "BTA",
+                            "price": 290,
+                            "action": "material",
+                            "material": "chic-boucle",
+                            "target": "Cover, Piping",
+                            "color": "#ad9f90"
+                        },
+                        {
+                            "title": "Bouclé Heather",
+                            "sku": "BHE",
+                            "price": 290,
+                            "action": "material",
+                            "material": "chic-boucle",
+                            "target": "Cover, Piping",
+                            "color": "#8a8486"
+                        },
+                        {
+                            "title": "Velvet Ochre",
+                            "sku": "VOC",
+                            "price": 190,
+                            "action": "material",
+                            "material": "soft-velvet",
+                            "target": "Cover, Piping",
+                            "color": "#8e7338"
+                        },
+                        {
+                            "title": "Velvet Sand",
+                            "sku": "VSA",
+                            "price": 190,
+                            "action": "material",
+                            "material": "soft-velvet",
+                            "target": "Cover, Piping",
+                            "color": "#c1a888"
+                        },
+                        {
+                            "title": "Velvet Sage",
+                            "sku": "VSG",
+                            "price": 190,
+                            "action": "material",
+                            "material": "soft-velvet",
+                            "target": "Cover, Piping",
+                            "color": "#646d50"
+                        },
+                        {
+                            "title": "Leather Cognac",
+                            "sku": "LCO",
+                            "price": 890,
+                            "action": "material",
+                            "material": "rough-leather",
+                            "target": "Cover, Piping",
+                            "color": "#825e41"
+                        },
+                        {
+                            "title": "Leather Anthracite",
+                            "sku": "LAN",
+                            "price": 890,
+                            "action": "material",
+                            "material": "rough-leather",
+                            "target": "Cover, Piping",
+                            "color": "#4a4549"
+                        },
+                        {
+                            "title": "Leather Mauve",
+                            "sku": "LMA",
+                            "price": 890,
+                            "action": "material",
+                            "material": "rough-leather",
+                            "target": "Cover, Piping",
+                            "color": "#78615b"
+                        },
+                        {
+                            "title": "Leather Olive",
+                            "sku": "LOL",
+                            "price": 890,
+                            "action": "material",
+                            "material": "rough-leather",
+                            "target": "Cover, Piping",
+                            "color": "#65675d"
+                        }
+                    ]
+                },
+                {
+                    "title": "Element left",
+                    "display": "module",
+                    "note": "The left end as you face the sofa.",
+                    "values": [
+                        {
+                            "title": "1 seat with arm",
+                            "sku": "L1",
+                            "price": -350,
+                            "action": "compose",
+                            "target": "Element_Arm"
+                        },
+                        {
+                            "title": "Chaise longue",
+                            "sku": "LC",
+                            "price": 0,
+                            "action": "compose",
+                            "target": "Element_Chaise"
+                        },
+                        {
+                            "title": "Ottoman, open end",
+                            "sku": "LO",
+                            "price": -500,
+                            "action": "compose",
+                            "target": "Element_Ottoman"
+                        }
+                    ]
+                },
+                {
+                    "title": "Successive element 1",
+                    "display": "sequence",
+                    "note": "Select one or more elements to create your perfect setup. The + buttons on the sofa add a seat too.",
+                    "values": [
+                        {
+                            "title": "1 seat",
+                            "sku": "M1S",
+                            "price": 0,
+                            "action": "compose",
+                            "target": "Element_Seat"
+                        },
+                        {
+                            "title": "1.5 seats",
+                            "sku": "M1H",
+                            "price": 390,
+                            "action": "compose",
+                            "target": "Element_Seat15"
+                        },
+                        {
+                            "title": "None",
+                            "sku": "M1N",
+                            "price": -690,
+                            "action": "compose"
+                        }
+                    ]
+                },
+                {
+                    "title": "Successive element 2",
+                    "display": "sequence",
+                    "values": [
+                        {
+                            "title": "1 seat",
+                            "sku": "M2S",
+                            "price": 690,
+                            "action": "compose",
+                            "target": "Element_Seat",
+                            "requires": "M1S, M1H"
+                        },
+                        {
+                            "title": "1.5 seats",
+                            "sku": "M2H",
+                            "price": 1080,
+                            "action": "compose",
+                            "target": "Element_Seat15",
+                            "requires": "M1S, M1H"
+                        },
+                        {
+                            "title": "None",
+                            "sku": "M2N",
+                            "price": 0,
+                            "action": "compose",
+                            "requires": "M1S, M1H"
+                        }
+                    ]
+                },
+                {
+                    "title": "Successive element 3",
+                    "display": "sequence",
+                    "values": [
+                        {
+                            "title": "1 seat",
+                            "sku": "M3S",
+                            "price": 690,
+                            "action": "compose",
+                            "target": "Element_Seat",
+                            "requires": "M2S, M2H"
+                        },
+                        {
+                            "title": "1.5 seats",
+                            "sku": "M3H",
+                            "price": 1080,
+                            "action": "compose",
+                            "target": "Element_Seat15",
+                            "requires": "M2S, M2H"
+                        },
+                        {
+                            "title": "None",
+                            "sku": "M3N",
+                            "price": 0,
+                            "action": "compose",
+                            "requires": "M2S, M2H"
+                        }
+                    ]
+                },
+                {
+                    "title": "Element right",
+                    "display": "module",
+                    "note": "The right end as you face the sofa.",
+                    "values": [
+                        {
+                            "title": "1 seat with arm",
+                            "sku": "R1",
+                            "price": 0,
+                            "action": "compose",
+                            "target": "Element_Arm",
+                            "param": "mirror"
+                        },
+                        {
+                            "title": "Chaise longue",
+                            "sku": "RC",
+                            "price": 350,
+                            "action": "compose",
+                            "target": "Element_Chaise",
+                            "param": "mirror"
+                        },
+                        {
+                            "title": "Ottoman, open end",
+                            "sku": "RO",
+                            "price": -150,
+                            "action": "compose",
+                            "target": "Element_Ottoman",
+                            "param": "mirror"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "sku": "NORA-CHAIR",
+            "name": "Nora Lounge Chair",
+            "url_key": "nora-lounge-chair",
+            "price": 1490,
+            "weight": 22,
+            "model": "nora-chair",
+            "scene": "gallery",
+            "tagline": "A compact lounge chair on a sculpted solid-wood frame.",
+            "lead_time": "Made to order · delivered in 4–6 weeks",
+            "description": "<p>Nora wraps a deep, cushioned seat in a single curve of solid wood, joined by hand and finished with discreet metal details. Small enough for a reading corner, generous enough to sink into.</p>",
+            "features": [
+                "Solid-wood frame | Steam-bent and hand-joined, then finished in the wood of your choice.",
+                "Upholstered by hand | Covers are cut, piped and fitted individually in our atelier.",
+                "Built to be lived with | Removable seat cushion and a 10-year frame guarantee."
+            ],
+            "options": [
+                {
+                    "title": "Upholstery",
+                    "display": "tile",
+                    "values": [
+                        {
+                            "title": "Italian Velvet",
+                            "sku": "VEL",
+                            "price": 0,
+                            "action": "material",
+                            "material": "velvet",
+                            "target": "*fabric*"
+                        },
+                        {
+                            "title": "Bouclé",
+                            "sku": "BOU",
+                            "price": 180,
+                            "action": "material",
+                            "material": "boucle",
+                            "target": "*fabric*"
+                        },
+                        {
+                            "title": "Wool Herringbone",
+                            "sku": "HRB",
+                            "price": 120,
+                            "action": "material",
+                            "material": "herringbone",
+                            "target": "*fabric*"
+                        },
+                        {
+                            "title": "Aniline Leather",
+                            "sku": "LEA",
+                            "price": 520,
+                            "action": "material",
+                            "material": "leather",
+                            "target": "*fabric*"
+                        }
+                    ]
+                },
+                {
+                    "title": "Colour",
+                    "display": "swatch",
+                    "values": [
+                        {
+                            "title": "Mango",
+                            "sku": "MNG",
+                            "color": "#d26a1e",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "VEL"
+                        },
+                        {
+                            "title": "Peacock",
+                            "sku": "PCK",
+                            "color": "#1d5560",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "VEL"
+                        },
+                        {
+                            "title": "Emerald",
+                            "sku": "EMR",
+                            "color": "#1f5d47",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "VEL"
+                        },
+                        {
+                            "title": "Blush",
+                            "sku": "BLS",
+                            "color": "#dcaaa3",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "VEL"
+                        },
+                        {
+                            "title": "Midnight",
+                            "sku": "MDN",
+                            "color": "#232e4a",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "VEL"
+                        },
+                        {
+                            "title": "Ivory",
+                            "sku": "IVO",
+                            "color": "#f2ece1",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "BOU"
+                        },
+                        {
+                            "title": "Oat",
+                            "sku": "OAT",
+                            "color": "#dccdb4",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "BOU"
+                        },
+                        {
+                            "title": "Mocha",
+                            "sku": "MOC",
+                            "color": "#735a48",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "BOU"
+                        },
+                        {
+                            "title": "Charcoal",
+                            "sku": "CHC",
+                            "color": "#47474a",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "HRB"
+                        },
+                        {
+                            "title": "Flint",
+                            "sku": "FLT",
+                            "color": "#8a8783",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "HRB"
+                        },
+                        {
+                            "title": "Camel",
+                            "sku": "CAM",
+                            "color": "#b48c5c",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "HRB"
+                        },
+                        {
+                            "title": "Cognac",
+                            "sku": "COG",
+                            "color": "#8d4d25",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "LEA"
+                        },
+                        {
+                            "title": "Tan",
+                            "sku": "TAN",
+                            "color": "#b47d4c",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "LEA"
+                        },
+                        {
+                            "title": "Nero",
+                            "sku": "NER",
+                            "color": "#1d1c1b",
+                            "action": "color",
+                            "target": "*fabric*",
+                            "requires": "LEA"
+                        }
+                    ]
+                },
+                {
+                    "title": "Frame",
+                    "display": "tile",
+                    "values": [
+                        {
+                            "title": "Canaletto Walnut",
+                            "sku": "WAL",
+                            "price": 0,
+                            "action": "material",
+                            "material": "walnut",
+                            "target": "*wood*"
+                        },
+                        {
+                            "title": "Natural Oak",
+                            "sku": "OAK",
+                            "price": 0,
+                            "action": "material",
+                            "material": "oak",
+                            "target": "*wood*"
+                        },
+                        {
+                            "title": "White Ash",
+                            "sku": "ASH",
+                            "price": 0,
+                            "action": "material",
+                            "material": "ash",
+                            "target": "*wood*"
+                        },
+                        {
+                            "title": "Ebonised Oak",
+                            "sku": "EBO",
+                            "price": 60,
+                            "action": "material",
+                            "material": "ebony",
+                            "target": "*wood*"
+                        }
+                    ]
+                },
+                {
+                    "title": "Metal Details",
+                    "display": "swatch",
+                    "values": [
+                        {
+                            "title": "Brushed Brass",
+                            "sku": "BRS",
+                            "price": 0,
+                            "action": "material",
+                            "material": "brass",
+                            "target": "SheenChair_metal"
+                        },
+                        {
+                            "title": "Polished Chrome",
+                            "sku": "CHR",
+                            "price": 0,
+                            "action": "material",
+                            "material": "chrome",
+                            "target": "SheenChair_metal"
+                        },
+                        {
+                            "title": "Matte Black Steel",
+                            "sku": "BLK",
+                            "price": 0,
+                            "action": "material",
+                            "material": "black-steel",
+                            "target": "SheenChair_metal"
+                        },
+                        {
+                            "title": "Burnished Bronze",
+                            "sku": "BRZ",
+                            "price": 30,
+                            "action": "material",
+                            "material": "bronze",
+                            "target": "SheenChair_metal"
+                        }
+                    ]
+                },
+                {
+                    "title": "Lumbar Cushion",
+                    "display": "pill",
+                    "values": [
+                        {
+                            "title": "None",
+                            "sku": "NOC",
+                            "price": 0
+                        },
+                        {
+                            "title": "Matching cushion",
+                            "sku": "CUS",
+                            "price": 95
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "sku": "FIORA-TABLE",
+            "name": "Fiora Porcelain Coffee Table",
+            "url_key": "fiora-porcelain-coffee-table",
+            "price": 1890,
+            "weight": 48,
+            "model": "fiora-table",
+            "scene": "studio",
+            "tagline": "A 12 mm porcelain slab on a sculpted drum base.",
+            "lead_time": "Cut to order from full-size slabs · delivered in 3–5 weeks",
+            "description": "<p>Fiora shows what large-format porcelain can do as furniture: a slab with the depth of natural marble, but stain-, scratch- and heat-resistant. Each top is cut from a full slab, so the veining runs continuously across the surface.</p>",
+            "features": [
+                "Large-format porcelain | Through-body slabs with the look of natural stone and none of its fragility.",
+                "Cut to your shape | Round, oval or rectangular tops, edges eased and polished by hand.",
+                "Lives with you | Heat, stain and scratch resistant: no sealing, no coasters required."
+            ],
+            "options": [
+                {
+                    "title": "Shape",
+                    "display": "pill",
+                    "values": [
+                        {
+                            "title": "Round · Ø 90 cm",
+                            "sku": "RND",
+                            "price": 0,
+                            "action": "visibility",
+                            "target": "Top_Round, Base_Single, !Top_Oval, !Top_Rect, !Base_Twin"
+                        },
+                        {
+                            "title": "Oval · 130 × 70 cm",
+                            "sku": "OVL",
+                            "price": 260,
+                            "action": "visibility",
+                            "target": "Top_Oval, Base_Twin, !Top_Round, !Top_Rect, !Base_Single"
+                        },
+                        {
+                            "title": "Rectangle · 120 × 65 cm",
+                            "sku": "REC",
+                            "price": 190,
+                            "action": "visibility",
+                            "target": "Top_Rect, Base_Twin, !Top_Round, !Top_Oval, !Base_Single"
+                        }
+                    ]
+                },
+                {
+                    "title": "Porcelain Top",
+                    "display": "tile",
+                    "note": "Italgres large-format porcelain, 12 mm.",
+                    "values": [
+                        {
+                            "title": "Calacatta Oro",
+                            "sku": "CAL",
+                            "price": 0,
+                            "action": "material",
+                            "material": "calacatta-oro",
+                            "target": "Porcelain"
+                        },
+                        {
+                            "title": "Statuario",
+                            "sku": "STA",
+                            "price": 90,
+                            "action": "material",
+                            "material": "statuario",
+                            "target": "Porcelain"
+                        },
+                        {
+                            "title": "Nero Marquina",
+                            "sku": "NRM",
+                            "price": 180,
+                            "action": "material",
+                            "material": "nero-marquina",
+                            "target": "Porcelain"
+                        },
+                        {
+                            "title": "Pietra Grey",
+                            "sku": "PIE",
+                            "price": 120,
+                            "action": "material",
+                            "material": "pietra-grey",
+                            "target": "Porcelain"
+                        },
+                        {
+                            "title": "Crema Marfil",
+                            "sku": "CRE",
+                            "price": 120,
+                            "action": "material",
+                            "material": "crema-marfil",
+                            "target": "Porcelain"
+                        }
+                    ]
+                },
+                {
+                    "title": "Surface Finish",
+                    "display": "pill",
+                    "values": [
+                        {
+                            "title": "Polished",
+                            "sku": "POL",
+                            "price": 150,
+                            "action": "props",
+                            "target": "Porcelain",
+                            "param": "roughness:0.05, clearcoat:1"
+                        },
+                        {
+                            "title": "Satin",
+                            "sku": "SAT",
+                            "price": 0,
+                            "action": "props",
+                            "target": "Porcelain",
+                            "param": "roughness:0.3, clearcoat:0.25"
+                        },
+                        {
+                            "title": "Matt",
+                            "sku": "MAT",
+                            "price": 0,
+                            "action": "props",
+                            "target": "Porcelain",
+                            "param": "roughness:0.62, clearcoat:0"
+                        }
+                    ]
+                },
+                {
+                    "title": "Base",
+                    "display": "tile",
+                    "values": [
+                        {
+                            "title": "Brushed Brass",
+                            "sku": "BRS",
+                            "price": 120,
+                            "action": "material",
+                            "material": "brass",
+                            "target": "Base"
+                        },
+                        {
+                            "title": "Burnished Bronze",
+                            "sku": "BRZ",
+                            "price": 120,
+                            "action": "material",
+                            "material": "bronze",
+                            "target": "Base"
+                        },
+                        {
+                            "title": "Matte Black Steel",
+                            "sku": "BLK",
+                            "price": 0,
+                            "action": "material",
+                            "material": "black-steel",
+                            "target": "Base"
+                        },
+                        {
+                            "title": "Ebonised Oak",
+                            "sku": "EBO",
+                            "price": 80,
+                            "action": "material",
+                            "material": "ebony",
+                            "target": "Base"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

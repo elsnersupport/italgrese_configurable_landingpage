@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="italgres" translate="label" sortOrder="15">
+            <label>Italgres</label>
+        </tab>
+        <section id="italgres_demo" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Demo Mode</label>
+            <tab>italgres</tab>
+            <resource>Italgres_DemoMode::config</resource>
+            <group id="general" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Configurator Demo</label>
+                <field id="lock_enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Only Allow Configurator Pages</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Every storefront URL except products with "Enable 3D Configurator Page" redirects to the landing product. The admin is not affected.</comment>
+                </field>
+                <field id="landing_sku" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Landing Product SKU</label>
+                    <comment>Where the home page and blocked URLs go.</comment>
+                </field>
+                <field id="allowed_actions" translate="label comment" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1">
+                    <label>Extra Allowed Routes</label>
+                    <comment>Full action names, one per line (e.g. contact_index_index). Cart AJAX and section loading are always allowed.</comment>
+                </field>
+                <field id="brand_name" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Brand Name in Header</label>
+                </field>
+                <field id="badge" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Header Badge</label>
+                </field>
+                <field id="show_nav" translate="label comment" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Product Switcher</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Lists every configurator product in the header.</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

@@ -1,0 +1,73 @@
+<!--@subject {{trans "New quote request %reference — %product" reference=$reference product=$product_name}} @-->
+<!--@vars {
+"var reference":"Reference",
+"var product_name":"Product",
+"var config_code":"Configuration code",
+"var config_rows|raw":"Configuration rows (HTML)",
+"var unit_price":"Unit price",
+"var total_price":"Total price",
+"var qty":"Quantity",
+"var dimensions":"Dimensions",
+"var snapshot_html|raw":"Render (HTML)",
+"var share_url":"Link to the configuration",
+"var customer_name":"Customer name",
+"var email":"Customer email",
+"var phone":"Phone",
+"var customer_type":"Customer type",
+"var company":"Company",
+"var location":"City / country",
+"var contact_preference":"Preferred contact",
+"var message":"Message",
+"var admin_url":"Admin URL"
+} @-->
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4efe8;font-family:Helvetica,Arial,sans-serif;color:#1f1c19;">
+    <tr>
+        <td align="center" style="padding:32px 12px;">
+            <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;background:#fbf9f6;">
+                <tr>
+                    <td style="padding:30px 40px 10px;">
+                        <p style="margin:0;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#6f5531;">{{trans "New quote request"}} · {{var reference}}</p>
+                        <h1 style="margin:10px 0 0;font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-size:30px;line-height:1.2;">{{var product_name}}</h1>
+                        <p style="margin:8px 0 0;font-size:13px;color:#7d7469;">{{var config_code}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:20px 40px 0;">{{var snapshot_html|raw}}</td>
+                </tr>
+                <tr>
+                    <td style="padding:24px 40px 0;">
+                        <h2 style="margin:0 0 6px;font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-size:20px;">{{trans "Configuration"}}</h2>
+                        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                            {{var config_rows|raw}}
+                            <tr><td style="padding:9px 0;border-bottom:1px solid #e9e2d8;color:#7d7469;font-size:13px;">{{trans "Dimensions"}}</td><td style="padding:9px 0;border-bottom:1px solid #e9e2d8;font-size:13px;text-align:right;">{{var dimensions}}</td></tr>
+                            <tr><td style="padding:9px 0;border-bottom:1px solid #e9e2d8;color:#7d7469;font-size:13px;">{{trans "Quantity"}}</td><td style="padding:9px 0;border-bottom:1px solid #e9e2d8;font-size:13px;text-align:right;">{{var qty}} × {{var unit_price}}</td></tr>
+                            <tr><td style="padding:12px 0;font-size:15px;">{{trans "Indicative total"}}</td><td style="padding:12px 0;font-size:18px;font-family:Georgia,'Times New Roman',serif;text-align:right;">{{var total_price}}</td></tr>
+                        </table>
+                        <p style="margin:10px 0 0;font-size:13px;"><a href="{{var share_url}}" style="color:#6f5531;">{{trans "Open this configuration in 3D"}}</a></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:28px 40px 0;">
+                        <h2 style="margin:0 0 6px;font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-size:20px;">{{trans "Customer"}}</h2>
+                        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:13px;">
+                            <tr><td style="padding:6px 0;color:#7d7469;width:40%;">{{trans "Name"}}</td><td style="padding:6px 0;">{{var customer_name}}</td></tr>
+                            <tr><td style="padding:6px 0;color:#7d7469;">{{trans "Email"}}</td><td style="padding:6px 0;"><a href="mailto:{{var email}}" style="color:#1f1c19;">{{var email}}</a></td></tr>
+                            <tr><td style="padding:6px 0;color:#7d7469;">{{trans "Phone"}}</td><td style="padding:6px 0;">{{var phone}}</td></tr>
+                            <tr><td style="padding:6px 0;color:#7d7469;">{{trans "Preferred contact"}}</td><td style="padding:6px 0;">{{var contact_preference}}</td></tr>
+                            <tr><td style="padding:6px 0;color:#7d7469;">{{trans "Customer type"}}</td><td style="padding:6px 0;">{{var customer_type}}</td></tr>
+                            <tr><td style="padding:6px 0;color:#7d7469;">{{trans "Company / studio"}}</td><td style="padding:6px 0;">{{var company}}</td></tr>
+                            <tr><td style="padding:6px 0;color:#7d7469;">{{trans "City / country"}}</td><td style="padding:6px 0;">{{var location}}</td></tr>
+                        </table>
+                        <p style="margin:14px 0 0;padding:14px 16px;background:#f4efe8;font-size:13px;line-height:1.6;">{{var message}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:28px 40px 34px;font-size:12px;color:#7d7469;line-height:1.6;">
+                        {{trans "Reply to this email to answer the customer directly. The request is also listed in the admin under Sales › Quote Requests:"}}
+                        <a href="{{var admin_url}}" style="color:#6f5531;">{{var admin_url}}</a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>

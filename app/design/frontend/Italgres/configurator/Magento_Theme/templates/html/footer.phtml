@@ -1,0 +1,16 @@
+<?php
+declare(strict_types=1);
+
+use Italgres\DemoMode\ViewModel\DemoNav;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var DemoNav|null $nav */
+$nav = $block->getData('demo_nav');
+?>
+<div class="ig-footer">
+    <span>© <?= (int)date('Y') ?> <?= $escaper->escapeHtml($nav ? $nav->getBrandName() : 'Italgres') ?></span>
+    <span><?= $escaper->escapeHtml(__('3D configurator preview · Magento 2 + Hyvä')) ?></span>
+</div>

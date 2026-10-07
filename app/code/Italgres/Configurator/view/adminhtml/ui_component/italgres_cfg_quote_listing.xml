@@ -1,0 +1,261 @@
+<?xml version="1.0"?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">italgres_cfg_quote_listing.italgres_cfg_quote_listing_data_source</item>
+        </item>
+    </argument>
+    <settings>
+        <spinner>italgres_cfg_quote_columns</spinner>
+        <deps>
+            <dep>italgres_cfg_quote_listing.italgres_cfg_quote_listing_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="italgres_cfg_quote_listing_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <storageConfig>
+                <param name="indexField" xsi:type="string">request_id</param>
+            </storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>Italgres_Configurator::quotes</aclResource>
+        <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider" name="italgres_cfg_quote_listing_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>request_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <listingToolbar name="listing_top">
+        <settings>
+            <sticky>true</sticky>
+        </settings>
+        <bookmark name="bookmarks"/>
+        <columnsControls name="columns_controls"/>
+        <filterSearch name="fulltext"/>
+        <filters name="listing_filters"/>
+        <exportButton name="export_button"/>
+        <massaction name="listing_massaction">
+            <action name="status_contacted">
+                <settings>
+                    <url path="italgres_cfg/quote/massStatus">
+                        <param name="status">contacted</param>
+                    </url>
+                    <type>status_contacted</type>
+                    <label translate="true">Mark as Contacted</label>
+                </settings>
+            </action>
+            <action name="status_quoted">
+                <settings>
+                    <url path="italgres_cfg/quote/massStatus">
+                        <param name="status">quoted</param>
+                    </url>
+                    <type>status_quoted</type>
+                    <label translate="true">Mark as Quote sent</label>
+                </settings>
+            </action>
+            <action name="status_won">
+                <settings>
+                    <url path="italgres_cfg/quote/massStatus">
+                        <param name="status">won</param>
+                    </url>
+                    <type>status_won</type>
+                    <label translate="true">Mark as Won</label>
+                </settings>
+            </action>
+            <action name="status_lost">
+                <settings>
+                    <url path="italgres_cfg/quote/massStatus">
+                        <param name="status">lost</param>
+                    </url>
+                    <type>status_lost</type>
+                    <label translate="true">Mark as Lost</label>
+                </settings>
+            </action>
+            <action name="status_new">
+                <settings>
+                    <url path="italgres_cfg/quote/massStatus">
+                        <param name="status">new</param>
+                    </url>
+                    <type>status_new</type>
+                    <label translate="true">Mark as New</label>
+                </settings>
+            </action>
+            <action name="delete">
+                <settings>
+                    <confirm>
+                        <message translate="true">Delete the selected quote requests?</message>
+                        <title translate="true">Delete</title>
+                    </confirm>
+                    <url path="italgres_cfg/quote/massDelete"/>
+                    <type>delete</type>
+                    <label translate="true">Delete</label>
+                </settings>
+            </action>
+        </massaction>
+        <paging name="listing_paging"/>
+    </listingToolbar>
+    <columns name="italgres_cfg_quote_columns">
+        <selectionsColumn name="ids" sortOrder="0">
+            <settings>
+                <indexField>request_id</indexField>
+            </settings>
+        </selectionsColumn>
+        <column name="request_id" sortOrder="10">
+            <settings>
+                <filter>textRange</filter>
+                <visible>false</visible>
+                <label translate="true">ID</label>
+            </settings>
+        </column>
+        <column name="reference" sortOrder="20">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Reference</label>
+            </settings>
+        </column>
+        <column name="created_at" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date" sortOrder="30">
+            <settings>
+                <filter>dateRange</filter>
+                <dataType>date</dataType>
+                <sorting>desc</sorting>
+                <label translate="true">Received</label>
+            </settings>
+        </column>
+        <column name="status" component="Magento_Ui/js/grid/columns/select" sortOrder="40">
+            <settings>
+                <options class="Italgres\Configurator\Model\Source\QuoteStatus"/>
+                <filter>select</filter>
+                <dataType>select</dataType>
+                <label translate="true">Status</label>
+            </settings>
+        </column>
+        <column name="snapshot" class="Italgres\Configurator\Ui\Component\Listing\Column\QuoteSnapshot" sortOrder="50">
+            <settings>
+                <bodyTmpl>ui/grid/cells/html</bodyTmpl>
+                <sortable>false</sortable>
+                <label translate="true">Render</label>
+            </settings>
+        </column>
+        <column name="product_name" sortOrder="60">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Product</label>
+            </settings>
+        </column>
+        <column name="config_code" sortOrder="70">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Configuration</label>
+            </settings>
+        </column>
+        <column name="customer_name" sortOrder="80">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Customer</label>
+            </settings>
+        </column>
+        <column name="email" sortOrder="90">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Email</label>
+            </settings>
+        </column>
+        <column name="phone" sortOrder="100">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Phone</label>
+            </settings>
+        </column>
+        <column name="customer_type" component="Magento_Ui/js/grid/columns/select" sortOrder="110">
+            <settings>
+                <options class="Italgres\Configurator\Model\Source\CustomerType"/>
+                <filter>select</filter>
+                <dataType>select</dataType>
+                <label translate="true">Customer Type</label>
+            </settings>
+        </column>
+        <column name="company" sortOrder="120">
+            <settings>
+                <filter>text</filter>
+                <visible>false</visible>
+                <label translate="true">Company</label>
+            </settings>
+        </column>
+        <column name="city" sortOrder="130">
+            <settings>
+                <filter>text</filter>
+                <visible>false</visible>
+                <label translate="true">City</label>
+            </settings>
+        </column>
+        <column name="country" sortOrder="140">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Country</label>
+            </settings>
+        </column>
+        <column name="contact_preference" sortOrder="150">
+            <settings>
+                <filter>text</filter>
+                <visible>false</visible>
+                <label translate="true">Contact By</label>
+            </settings>
+        </column>
+        <column name="qty" sortOrder="160">
+            <settings>
+                <filter>textRange</filter>
+                <visible>false</visible>
+                <label translate="true">Qty</label>
+            </settings>
+        </column>
+        <column name="total_price" class="Italgres\Configurator\Ui\Component\Listing\Column\Money" sortOrder="170">
+            <settings>
+                <filter>textRange</filter>
+                <label translate="true">Total</label>
+            </settings>
+        </column>
+        <column name="dimensions" sortOrder="180">
+            <settings>
+                <filter>text</filter>
+                <visible>false</visible>
+                <label translate="true">Dimensions</label>
+            </settings>
+        </column>
+        <column name="message" sortOrder="190">
+            <settings>
+                <filter>text</filter>
+                <visible>false</visible>
+                <label translate="true">Message</label>
+            </settings>
+        </column>
+        <column name="admin_note" sortOrder="200">
+            <settings>
+                <filter>text</filter>
+                <visible>false</visible>
+                <label translate="true">Internal Note</label>
+            </settings>
+        </column>
+        <column name="email_sent" component="Magento_Ui/js/grid/columns/select" sortOrder="210">
+            <settings>
+                <options class="Magento\Config\Model\Config\Source\Yesno"/>
+                <filter>select</filter>
+                <dataType>select</dataType>
+                <label translate="true">Email Sent</label>
+            </settings>
+        </column>
+        <actionsColumn name="actions" class="Italgres\Configurator\Ui\Component\Listing\Column\Actions" sortOrder="300">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="routePath" xsi:type="string">italgres_cfg/quote</item>
+                    <item name="idField" xsi:type="string">request_id</item>
+                    <item name="editAction" xsi:type="string">view</item>
+                    <item name="editLabel" xsi:type="string">View</item>
+                </item>
+            </argument>
+            <settings>
+                <indexField>request_id</indexField>
+            </settings>
+        </actionsColumn>
+    </columns>
+</listing>

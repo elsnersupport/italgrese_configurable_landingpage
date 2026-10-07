@@ -1,0 +1,45 @@
+<!--@subject {{trans "Your %product quote request (%reference)" product=$product_name reference=$reference}} @-->
+<!--@vars {
+"var reference":"Reference",
+"var product_name":"Product",
+"var config_code":"Configuration code",
+"var config_rows|raw":"Configuration rows (HTML)",
+"var total_price":"Total price",
+"var snapshot_html|raw":"Render (HTML)",
+"var share_url":"Link to the configuration",
+"var customer_name":"Customer name",
+"var store_name":"Store name"
+} @-->
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4efe8;font-family:Helvetica,Arial,sans-serif;color:#1f1c19;">
+    <tr>
+        <td align="center" style="padding:32px 12px;">
+            <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;background:#fbf9f6;">
+                <tr>
+                    <td style="padding:34px 40px 8px;">
+                        <p style="margin:0;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#6f5531;">{{trans "Quote request received"}} · {{var reference}}</p>
+                        <h1 style="margin:12px 0 0;font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-size:28px;line-height:1.25;">{{trans "Thank you, %name." name=$customer_name}}</h1>
+                        <p style="margin:12px 0 0;font-size:14px;line-height:1.7;color:#3a3530;">{{trans "Our design team has your configuration of the %product and will get back to you within one working day with a personalised quote, lead time and delivery options." product=$product_name}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:20px 40px 0;">{{var snapshot_html|raw}}</td>
+                </tr>
+                <tr>
+                    <td style="padding:24px 40px 0;">
+                        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                            {{var config_rows|raw}}
+                            <tr><td style="padding:12px 0;font-size:15px;">{{trans "Indicative price"}}</td><td style="padding:12px 0;font-size:18px;font-family:Georgia,'Times New Roman',serif;text-align:right;">{{var total_price}}</td></tr>
+                        </table>
+                        <p style="margin:6px 0 0;font-size:12px;color:#7d7469;">{{trans "Configuration code"}}: {{var config_code}}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:26px 40px 36px;">
+                        <a href="{{var share_url}}" style="display:inline-block;padding:14px 26px;background:#1f1c19;color:#fbf8f3;text-decoration:none;font-size:12px;letter-spacing:2px;text-transform:uppercase;">{{trans "View your configuration"}}</a>
+                        <p style="margin:22px 0 0;font-size:12px;color:#7d7469;">{{var store_name}}</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>

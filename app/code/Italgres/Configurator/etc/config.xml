@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <italgres_configurator>
+            <purchase>
+                <cart_enabled>0</cart_enabled>
+                <quote_enabled>1</quote_enabled>
+                <quote_recipient>manojmondal@elsner.com</quote_recipient>
+                <quote_sender>general</quote_sender>
+                <quote_admin_template>italgres_configurator_purchase_quote_admin_template</quote_admin_template>
+                <quote_customer_template>italgres_configurator_purchase_quote_customer_template</quote_customer_template>
+                <quote_customer_copy>1</quote_customer_copy>
+            </purchase>
+        </italgres_configurator>
+    </default>
+</config>

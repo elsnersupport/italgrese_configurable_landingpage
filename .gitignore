@@ -1,0 +1,21 @@
+# Composer project: only project code and config are tracked.
+# Magento core, Hyvä and all other packages come back with `composer install`
+# (vendor/ plus the base files magento/magento2-base deploys: bin/, pub/, lib/, setup/, …).
+*
+!/.gitignore
+!/README.md
+!/composer.json
+!/composer.lock
+!/auth.json.sample
+!/nginx.conf
+
+!/app
+!/app/*/
+!/app/code/**
+!/app/design/**
+!/app/i18n/**
+!/app/etc/config.php
+!/app/etc/hyva-themes.json
+
+# Viewer bundle build deps (the built view/frontend/web/js/viewer.js is tracked)
+/app/code/**/node_modules/

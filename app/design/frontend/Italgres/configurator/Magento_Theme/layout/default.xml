@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+  Demo shell: a slim brand header with the configurator product switcher, and a one-line footer.
+  The regular Hyvä header blocks (menu, search, account, minicart) are not needed while the storefront is locked.
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="css/italgres-shell.css"/>
+        <link src="images/apple-touch-icon.png" rel="apple-touch-icon"/>
+    </head>
+    <body>
+        <referenceBlock name="header-content">
+            <arguments>
+                <argument name="demo_nav" xsi:type="object">Italgres\DemoMode\ViewModel\DemoNav</argument>
+            </arguments>
+        </referenceBlock>
+        <!-- Default logo of this theme; Content > Design > Configuration > Header can still replace it -->
+        <referenceBlock name="logo">
+            <arguments>
+                <argument name="logo_file" xsi:type="string">images/logo.png</argument>
+                <argument name="logo_width" xsi:type="number">147</argument>
+                <argument name="logo_height" xsi:type="number">46</argument>
+            </arguments>
+        </referenceBlock>
+        <referenceBlock name="header-search" remove="true"/>
+        <referenceBlock name="header-compare" remove="true"/>
+        <referenceBlock name="cart-drawer" remove="true"/>
+        <referenceBlock name="topmenu_generic" remove="true"/>
+        <referenceBlock name="footer-static-links" remove="true"/>
+        <referenceBlock name="footer-cms-content" remove="true"/>
+        <referenceBlock name="footer-content">
+            <arguments>
+                <argument name="demo_nav" xsi:type="object">Italgres\DemoMode\ViewModel\DemoNav</argument>
+            </arguments>
+        </referenceBlock>
+    </body>
+</page>

@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
+    <template id="italgres_configurator_purchase_quote_admin_template" label="Italgres: New quote request (sales team)" file="quote_admin.html" type="html" module="Italgres_Configurator" area="frontend"/>
+    <template id="italgres_configurator_purchase_quote_customer_template" label="Italgres: Quote request received (customer)" file="quote_customer.html" type="html" module="Italgres_Configurator" area="frontend"/>
+</config>
