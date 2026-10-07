@@ -44,13 +44,17 @@ sales recipients under *Stores › Configuration › Italgres › 3D Configurato
 
 Source: `app/code/Italgres/Configurator/frontend-src` (esbuild + three.js).
 `npm install && npm run build` writes `view/frontend/web/js/viewer.js`, which is committed.
+It also copies three.js's Draco decoder to `view/frontend/web/js/draco/`. New `.glb` models should be WebP + Draco
+compressed as described in `frontend-src/README.md` (about 80% smaller than raw exports).
 
 ## Asset licences
 
-- Sofa and lounge chair models: © 2021 Wayfair LLC, **CC BY 4.0** (Khronos glTF Sample Assets). The credit is
-  shown under the viewer and must stay while they are used.
+- Sofa and lounge chair models: © 2021 Wayfair LLC, **CC BY 4.0** (Khronos glTF Sample Assets), compressed for
+  the web (WebP textures, Draco geometry). The credit is shown under the viewer and must stay while they are used.
 - Coffee table model, modular sofa elements and porcelain slab textures: generated for this demo
   (`app/code/Italgres/DemoMode/tools/`).
 - Fabric, leather and wood textures: Poly Haven, CC0.
+- Fonts: Cormorant Garamond and Jost, SIL OFL 1.1 (`Configurator/view/frontend/web/fonts/`).
+- Draco decoder (from three.js): Apache 2.0 (`Configurator/view/frontend/web/js/draco/`).
 
 These are stand-ins until the client supplies their own 3D models and material scans.

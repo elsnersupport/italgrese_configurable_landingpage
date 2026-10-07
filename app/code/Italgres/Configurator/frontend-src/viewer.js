@@ -43,6 +43,7 @@ import {
     MathUtils,
 } from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
@@ -178,6 +179,12 @@ export class ConfiguratorViewer {
         this.showHotspots = false;
 
         this.loader = new GLTFLoader();
+        // Models are Draco-compressed (geometry decodes back to float, so stretch/compose work unchanged).
+        // The decoder (wasm + wrapper, copied by `npm run build`) sits in js/draco/ next to this bundle.
+        const draco = new DRACOLoader();
+        draco.setDecoderPath(new URL('draco/', import.meta.url).href);
+        draco.setDecoderConfig({ type: 'wasm' });
+        this.loader.setDRACOLoader(draco);
         this.textureLoader = new TextureLoader();
         this.raycaster = new Raycaster();
         this.pointer = new Vector2();
@@ -950,7 +957,7 @@ export class ConfiguratorViewer {
             tile.width = width;
             tile.height = height;
             tile.getContext('2d').drawImage(canvas, sx, sy, cw, ch, 0, 0, width, height);
-            out[`${entry.target}|${entry.mirror ? 1 : 0}`] = tile.toDataURL('image/png');
+            out[`${entry.target}|${entry.mirror ? 1 : 0}`] = tile.toDataURL('image/webp', 0.9); // PNG where WebP encoding is unsupported
             holder.remove(node);
         }
         this.scene.remove(holder);

@@ -17,7 +17,7 @@
         <!-- Default logo of this theme; Content > Design > Configuration > Header can still replace it -->
         <referenceBlock name="logo">
             <arguments>
-                <argument name="logo_file" xsi:type="string">images/logo.png</argument>
+                <argument name="logo_file" xsi:type="string">images/logo.webp</argument>
                 <argument name="logo_width" xsi:type="number">147</argument>
                 <argument name="logo_height" xsi:type="number">46</argument>
             </arguments>

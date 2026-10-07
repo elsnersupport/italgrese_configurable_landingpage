@@ -70,7 +70,7 @@ class DemoInstaller
         $materials = $this->upsertMaterials($data['materials']);
         $models = $this->upsertModels($data['models']);
         foreach ($data['products'] as $productData) {
-            $this->upsertProduct($productData, $materials, $models);
+            $this->upsertProduct($productData, $materials, $models, $fixtures);
         }
         $this->configureStore($data['products'][0]['sku']);
     }
@@ -148,7 +148,7 @@ class DemoInstaller
      * @param array<string, int> $materials
      * @param array<string, int> $models
      */
-    private function upsertProduct(array $row, array $materials, array $models): void
+    private function upsertProduct(array $row, array $materials, array $models, string $fixtures): void
     {
         try {
             /** @var Product $product */
@@ -216,12 +216,32 @@ class DemoInstaller
                 ->setData('values', $values);
             $options[] = $option;
         }
+        if (!empty($row['image']) && in_array((string)$product->getImage(), ['', 'no_selection'], true)) {
+            $this->addProductImage($product, $fixtures . '/' . $row['image']);
+        }
         $product->setOptions($options);
         $product->setCanSaveCustomOptions(true);
         $product->setHasOptions(true);
         $product->setRequiredOptions(true);
         $this->productRepository->save($product);
         ($this->log)(sprintf('Product %s: %d configurator steps', $row['sku'], count($options)));
+    }
+
+    /**
+     * Base/small/thumbnail image (share previews, structured data, admin grid): a render of the default
+     * configuration, made with the configurator itself. Only added while the product has no image,
+     * so re-runs don't stack copies in the gallery.
+     */
+    private function addProductImage(Product $product, string $file): void
+    {
+        if (!is_file($file)) {
+            ($this->log)('Product image missing: ' . $file);
+            return;
+        }
+        $media = $this->filesystem->getDirectoryWrite(DirectoryList::MEDIA);
+        $tmp = 'tmp/italgres/' . basename($file);
+        $media->writeFile($tmp, (string)file_get_contents($file));
+        $product->addImageToMediaGallery($media->getAbsolutePath($tmp), ['image', 'small_image', 'thumbnail'], true, false);
     }
 
     private function configureStore(string $landingSku): void
